@@ -1,0 +1,236 @@
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+.content-wrapper {
+    padding-bottom: 60px;
+    padding-top: 10px;
+}
+
+input.form-control:focus {
+    box-shadow: 0 0 0 0.05rem rgba(0,123,255,.25);
+}
+
+#exampleAccordion {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#dataTable_length {
+    display: none
+}
+
+th.not-ordering:after, th.not-ordering:before{
+    content: "" !important;
+}
+
+table{
+    border-spacing: 0
+}
+
+th{
+    border-top: none !important
+}
+
+td {
+    vertical-align: middle !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    border-spacing: 0;
+}
+
+.card-login {
+    border: none;
+}
+
+.card-login .card-header {
+    background: #f7f7f7;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px
+}
+
+.card-login h3 {
+  line-height: 30px;
+  font-size: 25px;
+  font-weight: 300;
+  color: #ADADAD;
+  text-align:center;  
+}
+
+.card-login .login-lost
+{
+  text-align:center;
+  margin-bottom:0px;
+}
+
+.card-login .login-lost a
+{
+  color:#666;
+  font-size:16px;
+}
+
+.card-login div.form-group {
+    margin: 20px 0;
+}
+
+.card-login div.form-group:last-child {
+    margin: 70px 0 0 0;
+    
+}
+
+.card-login div.form-group:last-child p.login-lost {
+    margin-top: 15px
+}
+
+.card-login input.form-control {
+    height: 50px;
+    padding-left:10px;
+    font-size: 16px;
+    font-weight: normal;
+    
+}
+
+.card-login .form-group .input-group-text {
+    background-color: #FFF
+}
+
+.titulo-pagina {
+    color: #ADADAD; /*868e96;*/
+    font-weight: bold;
+    margin: 10px 0 30px 0;
+    padding: 3px 0;
+    border-bottom: 1px solid #EEE;
+    font-style: italic;
+}
+
+.titulo-card {
+    margin-bottom: 0
+}
+
+.obrigatorio {
+    color: #dc3545;
+    font-size: 1.2em;
+}
+
+.select2 {
+    width: 100% !important;
+}
+
+.select2-container .select2-selection--single {
+    height: 47.983px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 47.983px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    height: 100% !important;
+}
+
+.select-categorias, .select-pedidos {
+    margin: 0 auto;
+    width: 100% !important;
+}
+
+.select-categorias .ms-selectable li.ms-elem-selectable, .select-categorias .ms-selection li.ms-elem-selection, .select-pedidos .ms-selectable li.ms-elem-selectable, .select-pedidos .ms-selection li.ms-elem-selection{
+    padding: 10px 35px !important;
+    font-size: 16px !important;
+}
+
+.select-categorias .ms-selection .ms-selected i.fa-star {
+    color: #ffc107;
+    position: absolute;
+    left: 10px;
+    top: 15px;
+}
+
+#formTempoEntrega input::placeholder {
+    color: #BBB;
+}
+
+#wrapper-complementos:empty {
+    display: none;
+}
+
+#complemento-cat-roduto input {
+    background: #FFF !important;
+    cursor: not-allowed;
+}
+
+.msg-erro {
+    font-size: 14px !important;
+}
+
+.tooltip-inner {
+    max-width: 700px !important;
+    padding: 10px;
+}
+
+.avaliacao-pedido h4 {
+    font-size: 1.15rem;
+    color: #A90E12;
+    font-weight: bold;
+}
+
+.avaliacao-pedido h3 {
+    font-size: 1.05rem
+}
+
+.avaliacao-pedido .fa-star {
+    color: #e8500e;
+}
+
+.avaliacao-pedido p {
+    font-size: 1.2rem;
+}
+
+#menu-help .nav-link {
+    font-weight: lighter;
+    padding-top: 0;
+}
+
+#menu-help .nav-link.active {
+    color: #000;
+    background: transparent;
+    pointer-events: none;
+    text-decoration: underline;
+}
+
+#accordionHelp .card {
+    margin: 8px 0;
+    border-radius: 0;
+    border: none;
+}
+
+#accordionHelp .card .card-header {
+    padding: 0;
+    border-radius: 0;
+    border: none;
+}
+
+#accordionHelp .card .card-body {
+    border: 1px solid rgba(0,0,0,.125);
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 180%;
+}
+
+#accordionHelp .card .card-header button {
+    display: block;
+    width: 100%;
+    padding: 15px 15px;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    text-decoration: none;
+    color: rgb(51, 51, 51);
+    background: #F9F9F9;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+#accordionHelp .card .card-header button {
+    border-radius: 0;
+    transition: background-color .4s, color .2s;
+}

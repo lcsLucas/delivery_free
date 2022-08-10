@@ -1,0 +1,33 @@
+﻿#############################################
+##### Plugin Maps 
+##### - https://leafletjs.com/index.html
+#############################################
+
+- Erro no metodo de paginação dos responsaveis, nas permissões de menu e submenu
+    - verificar se nas outras páginas tbm está dando erro
+
+
+########
+
+    - tá mostrando para produtos que não tem complementos, e que foram selecionandos depois de um produto com complementos
+
+----------------
+
+- dá pra fazer a função "Restaurantes próximos" utilizando o cep
+
+- pedidos apenas na região do restaurante
+    - pegar os dois primeiro numeros do cep e comparar
+
+    - empresa tem cep, usar isso para mostrar restaurantes proximos
+        - adicionar para as empresa cadastro de cidades de entrega
+
+***************************************
+
+- arrumar o cadastro de entregadores
+
+- fazer a busca pela cozinha do restaurante,
+
+-----------------------
+
+no cadastro das promoções, na hora de cadsatrar ou alterar
+    - remover o produto da tabela promocao_itens antes de colocar o item vinculado com a promocao nova
