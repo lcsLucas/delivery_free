@@ -31,3 +31,21 @@
 
 no cadastro das promoções, na hora de cadsatrar ou alterar
     - remover o produto da tabela promocao_itens antes de colocar o item vinculado com a promocao nova
+
+### 000webhost
+
+nome:  delivery-free.000webhostapp.com 
+
+senha: E!DURuJqjaoT8ij2I*Q7
+
+nome banco: ban_delivery
+
+nome usuário: app_deliv
+
+senha usuário: Q3R?om{aC95}vWVi
+
+nome database: id20238694_ban_delivery
+
+usuário database: id20238694_app_deliv
+
+host database: localhost

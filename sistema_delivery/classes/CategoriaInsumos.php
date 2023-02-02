@@ -18,7 +18,7 @@ class CategoriaInsumos implements Interfaceclasses
      * @param $ativo
      * @param $idEmpresa
      */
-    public function __construct($nome="", $descricao="", $ativo="", $idEmpresa="")
+    public function __construct($nome = "", $descricao = "", $ativo = "", $idEmpresa = "")
     {
         $this->nome = $nome;
         $this->descricao = $descricao;
@@ -109,9 +109,10 @@ class CategoriaInsumos implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud();
-        $resp = $crud->Inserir("categoria_insumos",
-                                                          array("cat_nome", "cat_descricao", "cat_ativo", "emp_id"),
-                                                          array(utf8_decode($this->nome), utf8_decode($this->descricao), $this->ativo, $this->idEmpresa)
+        $resp = $crud->Inserir(
+            "categoria_insumos",
+            array("cat_nome", "cat_descricao", "cat_ativo", "emp_id"),
+            array(utf8_decode($this->nome), utf8_decode($this->descricao), $this->ativo, $this->idEmpresa)
         );
 
         return $resp;
@@ -120,10 +121,13 @@ class CategoriaInsumos implements Interfaceclasses
     public function alterar()
     {
         $crud = new Crud();
-        $resp = $crud->AlteraCondicoes("categoria_insumos", array(
-                                                                "cat_nome", "cat_descricao"),
-                                                                array(utf8_decode($this->nome), utf8_decode($this->descricao)),
-        "cat_id = " . $this->id . " AND emp_id = " . $this->idEmpresa
+        $resp = $crud->AlteraCondicoes(
+            "categoria_insumos",
+            array(
+                "cat_nome", "cat_descricao"
+            ),
+            array(utf8_decode($this->nome), utf8_decode($this->descricao)),
+            "cat_id = " . $this->id . " AND emp_id = " . $this->idEmpresa
         );
 
         return $resp;
@@ -149,15 +153,15 @@ class CategoriaInsumos implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "select count(*) total from categoria_insumos where lower(ins_nome) like ? AND emp_id = ?";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%", $this->idEmpresa));
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa));
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM categoria_insumos WHERE emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -169,11 +173,10 @@ class CategoriaInsumos implements Interfaceclasses
     {
         $crud = new Crud();
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "categoria_insumos where lower(cat_nome) like ? AND emp_id = ? order by cat_nome LIMIT ?, ?;";
-            $res = $crud->Consulta($sql, array("%".strtolower(tiraacento($filtro))."%", $this->idEmpresa, $inicio, $fim));
-        }
-        else {
+            $res = $crud->Consulta($sql, array("%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa, $inicio, $fim));
+        } else {
             $res = $crud->Consulta("categoria_insumos WHERE emp_id = ? order by cat_nome LIMIT ?, ?;", array($this->idEmpresa, $inicio, $fim));
         }
 
@@ -186,8 +189,8 @@ class CategoriaInsumos implements Interfaceclasses
         $resp = $crud->Consulta("categoria_insumos WHERE cat_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["cat_nome"]);
-            $this->descricao = html_entity_decode(utf8_encode($resp[0]["cat_descricao"]));
+            $this->nome = $resp[0]["cat_nome"];
+            $this->descricao = html_entity_decode($resp[0]["cat_descricao"]);
             $this->ativo = $resp[0]["cat_ativo"];
 
             return true;
@@ -196,14 +199,15 @@ class CategoriaInsumos implements Interfaceclasses
         return false;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select cat_ativo from categoria_insumos where cat_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['cat_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -212,5 +216,4 @@ class CategoriaInsumos implements Interfaceclasses
 
         return $resp;
     }
-
 }

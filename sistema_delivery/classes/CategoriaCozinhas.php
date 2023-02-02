@@ -25,7 +25,7 @@ class CategoriaCozinhas implements Interfaceclasses
      * @param $file_imagem
      * @param $nome_imagem
      */
-    public function __construct($nome='', $resumo='', $descricao='', $file_imagem='', $nome_imagem='', $status = '0')
+    public function __construct($nome = '', $resumo = '', $descricao = '', $file_imagem = '', $nome_imagem = '', $status = '0')
     {
         $this->nome = $nome;
         $this->resumo = $resumo;
@@ -160,7 +160,8 @@ class CategoriaCozinhas implements Interfaceclasses
     {
         $crud = new Crud(true);
 
-        $resp = $crud->Inserir('categoria_cozinha',
+        $resp = $crud->Inserir(
+            'categoria_cozinha',
             array(
                 'cat_nome',
                 'cat_resumo',
@@ -177,7 +178,7 @@ class CategoriaCozinhas implements Interfaceclasses
 
         if ($resp && !empty($this->file_imagem)) {
             $this->id = $crud->getUltimoCodigo();
-            $nomeimg = $this->id."_".date("YmdHis");
+            $nomeimg = $this->id . "_" . date("YmdHis");
 
             $nome_final = $this->salvarImagem($nomeimg);
 
@@ -185,7 +186,6 @@ class CategoriaCozinhas implements Interfaceclasses
 
             if (empty($resp))
                 $this->excluirImagens($nome_final);
-
         }
 
         $crud->executar($resp);
@@ -196,7 +196,8 @@ class CategoriaCozinhas implements Interfaceclasses
     {
         $crud = new Crud(true);
 
-        $resp = $crud->Altera('categoria_cozinha',
+        $resp = $crud->Altera(
+            'categoria_cozinha',
             array(
                 'cat_nome',
                 'cat_resumo',
@@ -207,7 +208,8 @@ class CategoriaCozinhas implements Interfaceclasses
                 utf8_decode($this->resumo),
                 utf8_decode($this->descricao)
             ),
-            'cat_id', $this->id
+            'cat_id',
+            $this->id
         );
 
         if ($resp && !empty($this->file_imagem)) {
@@ -221,7 +223,7 @@ class CategoriaCozinhas implements Interfaceclasses
                     $this->excluirImagens($this->nome_imagem);
                 }
 
-                $nomeimg = $this->id."_".date("YmdHis");
+                $nomeimg = $this->id . "_" . date("YmdHis");
                 $nome_final = $this->salvarImagem($nomeimg);
 
                 $resp = $crud->Altera("categoria_cozinha", array("cat_img"), array(utf8_decode($nome_final)), "cat_id", $this->id);
@@ -229,7 +231,6 @@ class CategoriaCozinhas implements Interfaceclasses
                 if (empty($resp))
                     $this->excluirImagens($nome_final);
             }
-
         }
 
         $crud->executar($resp);
@@ -241,13 +242,13 @@ class CategoriaCozinhas implements Interfaceclasses
         if (!empty($this->id)) {
             $crud = new Crud(true);
             $resp = false;
-            if($this->id) {
+            if ($this->id) {
                 $resp = $crud->ConsultaGenerica("SELECT cat_img From categoria_cozinha WHERE cat_id = ? LIMIT 1", array($this->id));
-                if(!empty($resp) && !empty($resp[0]["cat_img"])) {
+                if (!empty($resp) && !empty($resp[0]["cat_img"])) {
                     $this->nome_imagem = $resp[0]["cat_img"];
 
                     $resp = $crud->Excluir('categoria_cozinha', 'cat_id', $this->id);
-                    if($resp) {
+                    if ($resp) {
                         $this->excluirImagens($this->nome_imagem);
                     }
                 }
@@ -265,17 +266,19 @@ class CategoriaCozinhas implements Interfaceclasses
         // TODO: Implement listar() method.
     }
 
-    public function listar_ativos_empresa($array_cat) {
+    public function listar_ativos_empresa($array_cat)
+    {
         $crud = new Crud();
         if (!empty($array_cat))
-        $resp = $crud->BuscaAtributos('cat_id, cat_nome', 'categoria_cozinha WHERE cat_status = \'1\' AND cat_id NOT IN ('. implode(',', $array_cat) .')');
+            $resp = $crud->BuscaAtributos('cat_id, cat_nome', 'categoria_cozinha WHERE cat_status = \'1\' AND cat_id NOT IN (' . implode(',', $array_cat) . ')');
         else
             $resp = $crud->BuscaAtributos('cat_id, cat_nome', 'categoria_cozinha WHERE cat_status = \'1\'');
 
         return $resp;
     }
 
-    public function listar_produtos() {
+    public function listar_produtos()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica('SELECT distinct pt.pro_id, pt.pro_nome, pt.pro_descricao, pt.pro_valor, IF (ptp.tipo_desconto IS NOT NULL AND DATE_FORMAT(NOW(), "%Y-%m-%d") BETWEEN p.pro_dtInicio AND p.pro_dtFinal, IF(ptp.tipo_desconto = \'1\', pt.pro_valor - pt.pro_valor * ptp.desc_porcentagem / 100, pt.pro_valor - ptp.desc_valor), NULL) as valor_promocao, pt.pro_foto FROM produto pt LEFT JOIN promocao_tem_produtos ptp on pt.pro_id = ptp.produto_id LEFT JOIN promocao p on ptp.promocao_id = p.pro_id WHERE cat_id = ? AND pt.pro_ativo = \'1\' AND ((pro_controle_estoque = \'1\' AND pro_estoque_atual > 0) OR pro_controle_estoque <> \'1\')', array($this->id));
 
@@ -288,14 +291,14 @@ class CategoriaCozinhas implements Interfaceclasses
         $total = 0;
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "select count(*) total from categoria_cozinha where lower(cat_nome) like ?";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%"));
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%"));
         } else {
             $resp = $crud->BuscaAtributos('count(*) total', 'categoria_cozinha');
         }
 
-        if(!empty($resp) && !empty($resp[0]['total']))
+        if (!empty($resp) && !empty($resp[0]['total']))
             $total = $resp[0]['total'];
 
         return  ceil(($total));
@@ -305,11 +308,10 @@ class CategoriaCozinhas implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "categoria_cozinha where lower(cat_nome) like ? order by cat_nome LIMIT ?, ?";
-            $res = $crud->Consulta($sql, array("%".strtolower(tiraacento($filtro))."%", $inicio, $fim));
-        }
-        else {
+            $res = $crud->Consulta($sql, array("%" . strtolower(tiraacento($filtro)) . "%", $inicio, $fim));
+        } else {
             $res = $crud->Consulta("categoria_cozinha order by cat_nome LIMIT ?, ?;", array($inicio, $fim));
         }
 
@@ -322,10 +324,10 @@ class CategoriaCozinhas implements Interfaceclasses
         $resp = $crud->Consulta('categoria_cozinha WHERE cat_id = ? LIMIT 1', array($this->id));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]['cat_nome']);
-            $this->resumo = utf8_encode($resp[0]['cat_resumo']);
-            $this->descricao = htmlspecialchars_decode(utf8_encode($resp[0]['cat_descricao']));
-            $this->nome_imagem = utf8_encode($resp[0]['cat_img']);
+            $this->nome = $resp[0]['cat_nome'];
+            $this->resumo = $resp[0]['cat_resumo'];
+            $this->descricao = htmlspecialchars_decode($resp[0]['cat_descricao']);
+            $this->nome_imagem = $resp[0]['cat_img'];
 
             return true;
         }
@@ -333,23 +335,23 @@ class CategoriaCozinhas implements Interfaceclasses
         return false;
     }
 
-    function verificarImagem($file) {
+    function verificarImagem($file)
+    {
         $retorno = false;
 
         if (!empty($file["error"]) && $file["error"] !== 4) {
 
             if ($file["error"] === 1 || $file["error"] === 2)
-                $this->retorno = 'O arquivo \''. $file["name"] .'\' excede o tamanho máximo permitido de 1,5MB';
-            elseif($file["error"] === 3)
+                $this->retorno = 'O arquivo \'' . $file["name"] . '\' excede o tamanho máximo permitido de 1,5MB';
+            elseif ($file["error"] === 3)
                 $this->retorno = 'Não foi possível fazer o upload completo do arquivo, tente novamente';
-            elseif($file["error"] === 6)
+            elseif ($file["error"] === 6)
                 $this->retorno = 'Não foi possível fazer o upload do arquivo (pasta temporária ausente)';
             else
                 $this->retorno = 'Erro inesperável no upload do arquivo, tente novamente';
-
-        } else if($file["size"] > 1572864) {
+        } else if ($file["size"] > 1572864) {
             $this->retorno = 'O arquivo \'' . $file["name"] . '\' excede o tamanho máximo permitido de 1,5MB';
-        }elseif(strcmp('image/png', $file["type"]) !== 0 && strcmp('image/jpeg', $file["type"]) !== 0) {
+        } elseif (strcmp('image/png', $file["type"]) !== 0 && strcmp('image/jpeg', $file["type"]) !== 0) {
             $this->retorno = 'O Tipo do arquivo enviado é inválido. Por favor, envie um arquivo do tipo "jpeg ou png"';
         } else
             $retorno = true;
@@ -357,15 +359,16 @@ class CategoriaCozinhas implements Interfaceclasses
         return $retorno;
     }
 
-    private function salvarImagem($nome_file) {
+    private function salvarImagem($nome_file)
+    {
 
         $tipo_principal = ".jpg";
         $parametro_principal = null;
 
-        if (strcmp('image/jpeg',$this->file_imagem['type']) === 0) {
+        if (strcmp('image/jpeg', $this->file_imagem['type']) === 0) {
             $tipo_principal = ".jpg";
             $parametro_principal = 90;
-        } elseif (strcmp('image/png',$this->file_imagem['type']) === 0) {
+        } elseif (strcmp('image/png', $this->file_imagem['type']) === 0) {
             $tipo_principal = ".png";
             $parametro_principal = 9;
         }
@@ -375,32 +378,33 @@ class CategoriaCozinhas implements Interfaceclasses
         $image_principal = WideImage::loadFromFile($this->file_imagem['tmp_name']);
 
         $resized_principal = $image_principal->resize(640, 480, 'inside', 'down');
-        $resized_principal->saveToFile('../img/categoria_cozinhas/'. $nome_principal, $parametro_principal);
+        $resized_principal->saveToFile('../img/categoria_cozinhas/' . $nome_principal, $parametro_principal);
 
-        $resized_principal = $image_principal->resize(250, 188, 'inside','down');
+        $resized_principal = $image_principal->resize(250, 188, 'inside', 'down');
         $resized_principal->saveToFile('../img/categoria_cozinhas/thumbs/' . $nome_principal, $parametro_principal);
 
         return $nome_principal;
     }
 
-    private function excluirImagens($nome_img) {
+    private function excluirImagens($nome_img)
+    {
 
         if (file_exists("../img/categoria_cozinhas/" . $nome_img))
             unlink("../img/categoria_cozinhas/" . $nome_img);
 
         if (file_exists("../img/categoria_cozinhas/thumbs/" . $nome_img))
             unlink("../img/categoria_cozinhas/thumbs/" . $nome_img);
-
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select cat_status from categoria_cozinha where cat_id = ? LIMIT 1", array($this->id));
 
         if (!empty($resp) && !empty($resp[0]['cat_status']))
             $this->status = $resp[0]['cat_status'];
 
-        if(!empty($this->status))
+        if (!empty($this->status))
             $this->status = 0;
         else
             $this->status = 1;
@@ -409,5 +413,4 @@ class CategoriaCozinhas implements Interfaceclasses
 
         return $resp;
     }
-
 }

@@ -19,10 +19,10 @@ $array_max = array();
 $array_complementos = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
-    if (filter_has_var(INPUT_POST, 'btnEnviar')) {// enviada do formulario de cadastro/alteração
+    if (filter_has_var(INPUT_POST, 'btnEnviar')) { // enviada do formulario de cadastro/alteração
         $id = filter_input(INPUT_POST, "codigo", FILTER_VALIDATE_INT);
         $nome = filter_input(INPUT_POST, "nome", FILTER_SANITIZE_SPECIAL_CHARS);
-        $descricao = htmlentities(SQLinjection(filter_input(INPUT_POST, "descricao",FILTER_DEFAULT)));
+        $descricao = htmlentities(SQLinjection(filter_input(INPUT_POST, "descricao", FILTER_DEFAULT)));
 
         if (filter_has_var(INPUT_POST, "cat_complementos")) {
             $array_cat = array_filter($_POST["cat_complementos"]);
@@ -85,13 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
                                 'preco' => $array_preco,
                             )
                         );
-
                     }
-
                 }
-
             }
-
         }
 
         if (empty($nome)) {
@@ -119,7 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
                     $erroalterar = TRUE;
                     $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
                 }
-
             } else {
                 if ($categoria_produtos->inserir()) {
                     $sucessoinserir = TRUE;
@@ -135,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
                 }
             }
         }
-
     } else if (filter_has_var(INPUT_POST, "editar")) {
 
         $categoria_produtos->setId(SQLinjection(filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT)));
@@ -147,16 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
 
             $carregado = true;
         }
-
     } else if (filter_has_var(INPUT_POST, "deletar")) {
 
         $categoria_produtos->setId(filter_input(INPUT_POST, 'acao-codigo', FILTER_VALIDATE_INT));
-        if($categoria_produtos->excluir()) {
+        if ($categoria_produtos->excluir()) {
             $sucessodeletar = TRUE;
         } else {
             $errodeletar = TRUE;
         }
-
     } else if (filter_has_var(INPUT_POST, "alterar-status")) {
         $categoria_produtos->setId(filter_input(INPUT_POST, 'acao-codigo', FILTER_VALIDATE_INT));
         if ($categoria_produtos->modificaAtivo()) {
@@ -171,9 +163,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
 
 $filtro = "";
 $parametros = "";
-if(isset($_GET['buscar'])){
+if (isset($_GET['buscar'])) {
     $filtro = SQLinjection(filter_input(INPUT_GET, 'filtro', FILTER_SANITIZE_SPECIAL_CHARS));
-    $parametros = "&filtro=".$filtro."&buscar=";
+    $parametros = "&filtro=" . $filtro . "&buscar=";
 }
 
 //paginação
@@ -188,10 +180,10 @@ $page = (isset($pag) ? $pag : 1);
 
 $offset = (($page * $entries_per_page) - $entries_per_page);
 $num_rows = $categoria_produtos->quantidadeRegistros($filtro);
-$lista = $categoria_produtos->listarPaginacao($filtro,$offset,$entries_per_page);
+$lista = $categoria_produtos->listarPaginacao($filtro, $offset, $entries_per_page);
 
 $total_pages = ceil($num_rows / $entries_per_page);
-$pagination = pagination_six($total_pages, $page,$parametros);
+$pagination = pagination_six($total_pages, $page, $parametros);
 
 
 ?>
@@ -240,7 +232,7 @@ include 'menssagens.php';
 
                                     $unique = $comp['catcom_id'];
 
-                                    ?>
+                            ?>
 
                                     <div class="complemento" style="position:relative; border: 1px solid #CCC;background: #EEE; border-radius: 2px; margin-bottom: 20px; padding: 20px 15px;">
                                         <button class="btn btn-danger remover-complemento" style="position: absolute;top: -19px;right: -18px;border-radius: 50%;" type="button">
@@ -253,7 +245,7 @@ include 'menssagens.php';
                                                 <div class="form-group">
 
                                                     <label for="cat-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Categoria do Complemento:</label>
-                                                    <input autofocus maxlength="255" name="cat_complementos[]" value="<?= utf8_encode($comp['catcom_nome']) ?>" id="cat-<?= $unique ?>" type="text" class="form-control form-control-sm"  required>
+                                                    <input autofocus maxlength="255" name="cat_complementos[]" value="<?= $comp['catcom_nome'] ?>" id="cat-<?= $unique ?>" type="text" class="form-control form-control-sm" required>
                                                     <input type="hidden" name="id_complementos[]" value="idcomp_<?= $unique ?>">
                                                     <input type="hidden" name="unique[]" value="<?= $unique ?>">
                                                 </div>
@@ -272,7 +264,7 @@ include 'menssagens.php';
                                                 <div class="form-group form-control-sm">
 
                                                     <label for="min-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Qtde Min</label>
-                                                    <input id="min-<?= $unique ?>" name="min_cat[]" value="<?= !empty($comp['catcom_obrigatorio']) && empty($comp['catcom_qtdemin']) ? 1 : $comp['catcom_qtdemin'] ?>" maxlength="3" type="text" class="form-control form-control-sm text-center mascara-numero" >
+                                                    <input id="min-<?= $unique ?>" name="min_cat[]" value="<?= !empty($comp['catcom_obrigatorio']) && empty($comp['catcom_qtdemin']) ? 1 : $comp['catcom_qtdemin'] ?>" maxlength="3" type="text" class="form-control form-control-sm text-center mascara-numero">
 
                                                 </div>
 
@@ -282,8 +274,8 @@ include 'menssagens.php';
 
                                                 <div class="form-group form-control-sm">
 
-                                                    <label for="max-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;" >Qtde Max</label>
-                                                    <input id="max-<?= $unique ?>" name="max_cat[]" value="<?= $comp['catcom_qtdemax'] ?>" maxlength="3" type="text" class="form-control form-control-sm text-center mascara-numero" >
+                                                    <label for="max-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Qtde Max</label>
+                                                    <input id="max-<?= $unique ?>" name="max_cat[]" value="<?= $comp['catcom_qtdemax'] ?>" maxlength="3" type="text" class="form-control form-control-sm text-center mascara-numero">
 
                                                 </div>
 
@@ -305,7 +297,7 @@ include 'menssagens.php';
 
                                                         foreach ($comp['opcoes'] as $opcao) {
 
-                                                            ?>
+                                                    ?>
 
                                                             <div class="row opcoes-complementos">
 
@@ -314,7 +306,7 @@ include 'menssagens.php';
                                                                     <div class="form-group">
 
                                                                         <label for="nome-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Nome:</label>
-                                                                        <input id="nome-<?= $unique ?>" value="<?= utf8_encode($opcao['nome']) ?>" name="nome_idcomp_<?= $unique ?>[]" maxlength="255" type="text" class="form-control form-control-sm" required>
+                                                                        <input id="nome-<?= $unique ?>" value="<?= $opcao['nome'] ?>" name="nome_idcomp_<?= $unique ?>[]" maxlength="255" type="text" class="form-control form-control-sm" required>
                                                                     </div>
 
                                                                 </div>
@@ -324,7 +316,7 @@ include 'menssagens.php';
                                                                     <div class="form-group">
 
                                                                         <label for="descr-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Descrição:</label>
-                                                                        <input id="descr-<?= $unique ?>" value="<?= utf8_encode($opcao['descricao']) ?>" name="descr_idcomp_<?= $unique ?>[]" type="text" class="form-control form-control-sm" >
+                                                                        <input id="descr-<?= $unique ?>" value="<?= $opcao['descricao'] ?>" name="descr_idcomp_<?= $unique ?>[]" type="text" class="form-control form-control-sm">
 
                                                                     </div>
 
@@ -335,7 +327,7 @@ include 'menssagens.php';
                                                                     <div class="form-group form-control-sm">
 
                                                                         <label for="preco-<?= $unique ?>" style="font-size: .85rem; font-weight: bold;">Preço</label>
-                                                                        <input id="preco-<?= $unique ?>" value="<?= number_format($opcao['preco'], 2, ',', '.') ?>" name="preco_idcomp_<?= $unique ?>[]" type="text" maxlength="6" class="form-control form-control-sm mascara-dinheiro text-center" >
+                                                                        <input id="preco-<?= $unique ?>" value="<?= number_format($opcao['preco'], 2, ',', '.') ?>" name="preco_idcomp_<?= $unique ?>[]" type="text" maxlength="6" class="form-control form-control-sm mascara-dinheiro text-center">
 
                                                                     </div>
 
@@ -353,10 +345,9 @@ include 'menssagens.php';
 
                                                             </div>
 
-                                                            <?php
+                                                    <?php
 
                                                         }
-
                                                     }
 
                                                     ?>
@@ -375,10 +366,9 @@ include 'menssagens.php';
 
                                     </div>
 
-                                    <?php
+                            <?php
 
                                 }
-
                             }
 
                             ?>
@@ -418,51 +408,51 @@ include 'menssagens.php';
     </div>
     <div class="body">
         <div class="table-responsive">
-            <table class="table table-striped table-hover dataTable table-condensed" >
+            <table class="table table-striped table-hover dataTable table-condensed">
                 <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th class="text-center not-ordering">Ativo</th>
-                    <th class="text-center not-ordering">Ações</th>
-                </tr>
+                    <tr>
+                        <th>Nome</th>
+                        <th class="text-center not-ordering">Ativo</th>
+                        <th class="text-center not-ordering">Ações</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php
-                if (!empty($lista)) {
-                    foreach ($lista as $rs) {
-                        ?>
-                        <tr>
-                            <td><?php echo utf8_encode($rs['cat_nome']); ?></td>
-                            <td class="text-center">
-                                <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
-                                    <input type="hidden" name="acao-codigo" value="<?= $rs['cat_id'] ?>" />
-                                    <?php
-                                    if ($rs['cat_ativo']) {
-                                        ?>
-                                        <button type="submit" title="Clique para Desativar a Categoria" class="btn btn-link" name="alterar-status" ><i class="fa fa-check-square-o fa-2x text-success" aria-hidden="true"></i></button>
+                    <?php
+                    if (!empty($lista)) {
+                        foreach ($lista as $rs) {
+                    ?>
+                            <tr>
+                                <td><?php echo $rs['cat_nome']; ?></td>
+                                <td class="text-center">
+                                    <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
+                                        <input type="hidden" name="acao-codigo" value="<?= $rs['cat_id'] ?>" />
                                         <?php
-                                    } else {
+                                        if ($rs['cat_ativo']) {
                                         ?>
-                                        <button type="submit" title="Clique para Ativar a Categoria" class="btn btn-link" name="alterar-status" ><i class="fa fa-square-o fa-2x text-danger" aria-hidden="true"></i></button>
-                                    <?php } ?>
-                                </form>
-                            </td>
-                            <td class="text-center">
-                                <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
-                                    <input type="hidden" name="acao-codigo" value="<?= $rs['cat_id'] ?>" />
-                                    <button type="submit" class="btn btn-info btn-acao" title="Editar Categoria" name="editar">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                    </button>
-                                    <button type="submit" class="btn btn-danger btn-acao excluir" name="deletar" title="Excluir Categoria">
-                                        <i class="fa fa-times" aria-hidden="true"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
+                                            <button type="submit" title="Clique para Desativar a Categoria" class="btn btn-link" name="alterar-status"><i class="fa fa-check-square-o fa-2x text-success" aria-hidden="true"></i></button>
+                                        <?php
+                                        } else {
+                                        ?>
+                                            <button type="submit" title="Clique para Ativar a Categoria" class="btn btn-link" name="alterar-status"><i class="fa fa-square-o fa-2x text-danger" aria-hidden="true"></i></button>
+                                        <?php } ?>
+                                    </form>
+                                </td>
+                                <td class="text-center">
+                                    <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
+                                        <input type="hidden" name="acao-codigo" value="<?= $rs['cat_id'] ?>" />
+                                        <button type="submit" class="btn btn-info btn-acao" title="Editar Categoria" name="editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-acao excluir" name="deletar" title="Excluir Categoria">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                    <?php
+                        }
                     }
-                }
-                ?>
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -472,4 +462,3 @@ include 'menssagens.php';
 <?php
 include 'rodape.php';
 ?>
-

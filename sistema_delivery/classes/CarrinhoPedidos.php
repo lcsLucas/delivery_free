@@ -153,7 +153,8 @@ class CarrinhoPedidos
         $this->promocao = $promocao;
     }
 
-    public function iniciacarrinho() {
+    public function iniciacarrinho()
+    {
         $crud = new Crud();
         $resp = $crud->Inserir("carrinho", array("sessao", "data_criacao", "emp_id"), array(utf8_decode($this->sessao), $this->data_criacao, $this->idEmpresa));
 
@@ -164,7 +165,8 @@ class CarrinhoPedidos
         return $resp;
     }
 
-    public function carregar() {
+    public function carregar()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica('SELECT idcarrinho FROM carrinho WHERE sessao = ? AND emp_id = ? LIMIT 1', array($this->sessao, $this->idEmpresa));
 
@@ -176,7 +178,8 @@ class CarrinhoPedidos
         return false;
     }
 
-    public function adicionarProduto() {
+    public function adicionarProduto()
+    {
         $crud = new Crud(true);
         $resp = $crud->Inserir('carrinho_tem_produto', array('idcarrinho', 'pro_id', 'qtde', 'obs'), array($this->id, $this->produtos->getId(), $this->produtos->getQtde(), utf8_decode($this->produtos->getObs())));
 
@@ -203,7 +206,8 @@ class CarrinhoPedidos
 
                         while ($j < $total_opcoes && $resp) {
 
-                            $resp = $crud->Inserir('complementos_itens_carrinho',
+                            $resp = $crud->Inserir(
+                                'complementos_itens_carrinho',
                                 array(
                                     'idcarrinho_produto',
                                     'idcarrinho',
@@ -226,21 +230,19 @@ class CarrinhoPedidos
 
                             $j++;
                         }
-
                     }
 
                     $i++;
                 }
-
             }
-
         }
 
         $crud->executar($resp);
         return $resp;
     }
 
-    public function atualizarProduto() {
+    public function atualizarProduto()
+    {
         $crud = new Crud(true);
         $resp = $crud->AlteraCondicoes('carrinho_tem_produto', array('qtde', 'obs'), array($this->produtos->getQtde(), utf8_decode($this->produtos->getObs())), 'idcarrinho = ' . $this->id . ' AND pro_id = ' . $this->produtos->getId() . ' AND idcarrinho_produto = ' . $this->id_carrinho_item);
 
@@ -265,7 +267,8 @@ class CarrinhoPedidos
 
                     while ($j < $total_opcoes && $resp) {
 
-                        $resp = $crud->Inserir('complementos_itens_carrinho',
+                        $resp = $crud->Inserir(
+                            'complementos_itens_carrinho',
                             array(
                                 'idcarrinho_produto',
                                 'idcarrinho',
@@ -288,12 +291,10 @@ class CarrinhoPedidos
 
                         $j++;
                     }
-
                 }
 
                 $i++;
             }
-
         }
 
         $crud->executar($resp);
@@ -304,7 +305,8 @@ class CarrinhoPedidos
      *  Alterar essa função recuperar o id do carrinho e depois chamar a função recuperar itens e arrumar la na tela de listar produtos
      *
      */
-    public function carregarCarrinho($baseurl, $calc_desc = false) {
+    public function carregarCarrinho($baseurl, $calc_desc = false)
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica('SELECT idcarrinho FROM carrinho WHERE sessao = ? AND emp_id = ?', array($this->sessao, $this->idEmpresa));
 
@@ -321,7 +323,6 @@ class CarrinhoPedidos
                     $retono_itens['valor_desconto'] = $retono_desconto['valor_desconto'];
                     $retono_itens['cupom'] = $retono_desconto['cupom'];
                 }
-
             }
 
             return $retono_itens;
@@ -330,7 +331,8 @@ class CarrinhoPedidos
         return false;
     }
 
-    public function recuperaItens($baseurl) {
+    public function recuperaItens($baseurl)
+    {
         $crud = new Crud();
         $retorno = array();
         $total_itens = 0.0;
@@ -352,9 +354,9 @@ class CarrinhoPedidos
 
                 $produto['iditem'] =  $resp_produto['idcarrinho_produto'];
                 $produto['idproduto'] =  $resp_produto['pro_id'];
-                $produto['nome'] = utf8_encode($resp_produto['pro_nome']);
-                $produto['obs'] = utf8_encode($resp_produto['obs']);
-                $produto['foto'] = $baseurl . 'img/restaurantes/produtos/thumbs/' . utf8_encode($resp_produto['pro_foto']);
+                $produto['nome'] = $resp_produto['pro_nome'];
+                $produto['obs'] = $resp_produto['obs'];
+                $produto['foto'] = $baseurl . 'img/restaurantes/produtos/thumbs/' . $resp_produto['pro_foto'];
                 $produto['preco'] = number_format($resp_produto['pro_valor'], 2, ',',  '.');
                 $produto['qtde'] = $resp_produto['qtde'];
                 $produto['subTotal'] = filter_var($resp_produto['pro_valor'], FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION) * filter_var($resp_produto['qtde'], FILTER_VALIDATE_INT);
@@ -377,12 +379,11 @@ class CarrinhoPedidos
                     $array_complementos = array();
 
                     foreach ($resp as $icomp => $resp_comp) {
-                        $array_complementos['nome'] = (strlen($resp[$icomp]['nome']) <= 20) ? utf8_encode($resp[$icomp]['nome']) : substr(utf8_encode($resp[$icomp]['nome']), 0, 17) . '...';
+                        $array_complementos['nome'] = (strlen($resp[$icomp]['nome']) <= 20) ? $resp[$icomp]['nome'] : substr($resp[$icomp]['nome'], 0, 17) . '...';
                         $array_complementos['preco'] = number_format($resp[$icomp]['preco'], 2, ',',  '.');
                         $produto['subTotal'] += (filter_var($resp[$icomp]['preco'], FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION) * filter_var($resp_produto['qtde'], FILTER_VALIDATE_INT));
                         $produto['complementos'][] = $array_complementos;
                     }
-
                 }
 
                 $total_itens += $produto['subTotal'];
@@ -403,7 +404,8 @@ class CarrinhoPedidos
         return $retorno;
     }
 
-    function recuperar_complementos_item() {
+    function recuperar_complementos_item()
+    {
         $crud = new Crud();
         $retorno = array();
         $resp = $crud->ConsultaGenerica('SELECT catcom_id, pro_com_id, cat_com_id, IF (cat_com_id IS NOT NULL, 1, 2) as tipo FROM complementos_itens_carrinho cic WHERE idcarrinho = (SELECT idcarrinho FROM carrinho WHERE sessao = ? LIMIT 1) AND pro_id = ? AND idcarrinho_produto = ?', array($this->sessao, $this->produtos, $this->id_carrinho_item));
@@ -419,15 +421,14 @@ class CarrinhoPedidos
                 } else {
                     $retorno[$complemento['catcom_id']]['opcoes'][] = $opcao;
                 }
-
             }
-
         }
 
         return $retorno;
     }
 
-    public function aplicarCupom(){
+    public function aplicarCupom()
+    {
         $crud = new Crud();
 
         $resp = $crud->ConsultaGenerica('SELECT pro_id FROM promocao WHERE emp_id = ? AND pro_ativo = \'1\' AND pro_tipo = \'0\' AND lower(pro_cupom) = ? AND CURDATE() >= pro_dtInicio AND CURDATE() <= pro_dtFinal LIMIT 1', array($this->idEmpresa, $this->promocao));
@@ -443,13 +444,13 @@ class CarrinhoPedidos
                 if ($resp)
                     $_SESSION['_cupomaplicado'] = $id_promocao;
             }
-
         }
 
         return !empty($resp) ? true : false;
     }
 
-    public function removerCupom() {
+    public function removerCupom()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica('SELECT idcarrinho FROM carrinho WHERE sessao = ? LIMIT 1', array($this->sessao));
 
@@ -461,7 +462,8 @@ class CarrinhoPedidos
         return $resp;
     }
 
-    public function recuperarValores() {
+    public function recuperarValores()
+    {
         $crud = new Crud();
         $retorno = array();
 
@@ -498,20 +500,19 @@ class CarrinhoPedidos
 
                 $resp_frete = $resp[0]['emp_frete'];
                 $retorno['valor_total'] += filter_var($resp_frete, FILTER_VALIDATE_FLOAT);
-
             }
-
         }
 
         if (!empty($retorno['valor_total']) && $retorno['valor_total'] > 0)
-            $retorno['valor_total'] = number_format($retorno['valor_total'], 2,',','.');
+            $retorno['valor_total'] = number_format($retorno['valor_total'], 2, ',', '.');
         else
             $retorno['valor_total'] = 0;
 
         return $retorno;
     }
 
-    public function recuperarDescontoCupom($total_geral) {
+    public function recuperarDescontoCupom($total_geral)
+    {
         $crud = new Crud();
         $retorno = array();
 
@@ -539,22 +540,20 @@ class CarrinhoPedidos
 
                 $retorno['valor_desconto'] = $valor_desconto;
                 $retorno['valor_total'] = $total_geral - $valor_desconto;
-
             } else {
-                $val_desc= $resp_desconto['valor'];
+                $val_desc = $resp_desconto['valor'];
                 $valor_desconto = filter_var($val_desc, FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
                 $retorno['valor_desconto'] = $valor_desconto;
                 $retorno['valor_total'] = $total_geral - $valor_desconto;
             }
-
         }
 
         if (!empty($retorno['valor_desconto']))
-            $retorno['valor_desconto'] = number_format($retorno['valor_desconto'], 2,',','.');
+            $retorno['valor_desconto'] = number_format($retorno['valor_desconto'], 2, ',', '.');
 
         if (!empty($retorno['valor_total']) && $retorno['valor_total'] > 0)
-            $retorno['valor_total'] = number_format($retorno['valor_total'], 2,',','.');
+            $retorno['valor_total'] = number_format($retorno['valor_total'], 2, ',', '.');
 
         if (empty($retorno['valor_desconto']))
             $retorno['valor_desconto'] = 0;
@@ -568,11 +567,11 @@ class CarrinhoPedidos
         return $retorno;
     }
 
-    public function excluirItemCarrinho() {
-    	$crud = new Crud();
-    	$resp = $crud->ExcluirCondicoes('carrinho_tem_produto', 'idcarrinho = ' . $this->id . ' AND pro_id = ' . $this->produtos->getId() . ' AND idcarrinho_produto = ' . $this->id_carrinho_item);
+    public function excluirItemCarrinho()
+    {
+        $crud = new Crud();
+        $resp = $crud->ExcluirCondicoes('carrinho_tem_produto', 'idcarrinho = ' . $this->id . ' AND pro_id = ' . $this->produtos->getId() . ' AND idcarrinho_produto = ' . $this->id_carrinho_item);
 
-    	return $resp;
-	}
-
+        return $resp;
+    }
 }

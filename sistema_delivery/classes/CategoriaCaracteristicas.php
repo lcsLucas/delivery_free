@@ -18,7 +18,7 @@ class CategoriaCaracteristicas implements Interfaceclasses
      * @param $ativo
      * @param $idEmpresa
      */
-    public function __construct($nome="", $descricao="", $ativo="", $idEmpresa="")
+    public function __construct($nome = "", $descricao = "", $ativo = "", $idEmpresa = "")
     {
         $this->nome = $nome;
         $this->descricao = $descricao;
@@ -109,7 +109,8 @@ class CategoriaCaracteristicas implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud();
-        $resp = $crud->Inserir("tipo_caracteristicas",
+        $resp = $crud->Inserir(
+            "tipo_caracteristicas",
             array("tip_nome", "tip_descricao", "tip_ativo", "emp_id"),
             array(utf8_decode($this->nome), utf8_decode($this->descricao), $this->ativo, $this->idEmpresa)
         );
@@ -120,8 +121,11 @@ class CategoriaCaracteristicas implements Interfaceclasses
     public function alterar()
     {
         $crud = new Crud();
-        $resp = $crud->AlteraCondicoes("tipo_caracteristicas", array(
-            "tip_nome", "tip_descricao"),
+        $resp = $crud->AlteraCondicoes(
+            "tipo_caracteristicas",
+            array(
+                "tip_nome", "tip_descricao"
+            ),
             array(utf8_decode($this->nome), utf8_decode($this->descricao)),
             "tip_id = " . $this->id . " AND emp_id = " . $this->idEmpresa
         );
@@ -149,15 +153,15 @@ class CategoriaCaracteristicas implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "select count(*) total from tipo_caracteristicas where lower(tip_nome) like ? AND emp_id = ? ";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%"), $this->idEmpresa);
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%"), $this->idEmpresa);
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM tipo_caracteristicas WHERE emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -169,11 +173,10 @@ class CategoriaCaracteristicas implements Interfaceclasses
     {
         $crud = new Crud();
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "tipo_caracteristicas where lower(tip_nome) like ? AND emp_id = ? order by tip_nome LIMIT ?, ?;";
-            $res = $crud->Consulta($sql, array("%".strtolower(tiraacento($filtro))."%", $this->idEmpresa, $inicio, $fim));
-        }
-        else {
+            $res = $crud->Consulta($sql, array("%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa, $inicio, $fim));
+        } else {
             $res = $crud->Consulta("tipo_caracteristicas WHERE emp_id = ? order by tip_nome LIMIT ?, ?;", array($this->idEmpresa, $inicio, $fim));
         }
 
@@ -186,8 +189,8 @@ class CategoriaCaracteristicas implements Interfaceclasses
         $resp = $crud->Consulta("tipo_caracteristicas WHERE tip_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["tip_nome"]);
-            $this->descricao = html_entity_decode(utf8_encode($resp[0]["tip_descricao"]));
+            $this->nome = $resp[0]["tip_nome"];
+            $this->descricao = html_entity_decode($resp[0]["tip_descricao"]);
             $this->ativo = $resp[0]["tip_ativo"];
 
             return true;
@@ -196,14 +199,15 @@ class CategoriaCaracteristicas implements Interfaceclasses
         return false;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select tip_ativo from tipo_caracteristicas where tip_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['tip_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -212,5 +216,4 @@ class CategoriaCaracteristicas implements Interfaceclasses
 
         return $resp;
     }
-
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once './classes/Menu.php';
 require_once './classes/SubMenu.php';
 
@@ -17,7 +17,7 @@ $submenus = new SubMenu();
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
 
-            <li class="nav-item <?= ( "Home" == $menu )? "active" : "" ?>" data-toggle="tooltip" data-placement="right" title="Dashboard">
+            <li class="nav-item <?= ("Home" == $menu) ? "active" : "" ?>" data-toggle="tooltip" data-placement="right" title="Dashboard">
                 <a class="nav-link" href="principal.php">
                     <i class="fa fa-fw fa-dashboard"></i>
                     <span class="nav-link-text">Dashboard</span>
@@ -26,81 +26,75 @@ $submenus = new SubMenu();
 
             <?php
 
-                if (empty($usu->getTipoEmpresa())) {
-                    $listamenus = $menus->constroiMenus($usu->getTipo());
-                } else {
-                    $listamenus = $menus->constroiMenusEmpresa($usu->getId());
-                }
+            if (empty($usu->getTipoEmpresa())) {
+                $listamenus = $menus->constroiMenus($usu->getTipo());
+            } else {
+                $listamenus = $menus->constroiMenusEmpresa($usu->getId());
+            }
 
 
-                if (isset($listamenus)) {
-                    foreach ($listamenus as $rsmenus) {
-                        if (empty($usu->getTipoEmpresa())) {
-                            $listasubmenus = $submenus->constroiSubMenus($usu->getTipo(), $rsmenus['idmenu']);
-                        } else {
-                            $listasubmenus = $submenus->constroiSubMenusEmpresa($usu->getId(), $rsmenus['idmenu']);
-                        }
-                        ?>
-
-                        <?php
-                        if (empty($listasubmenus)) {//menu sem sub menu
-                            ?>
-                            <li class="nav-item <?= utf8_encode($rsmenus['descricao_menu']) == $menu ? "active" : "" ?>"
-                                data-toggle="tooltip" data-placement="right"
-                                title="<?php echo utf8_encode($rsmenus['descricao_menu']); ?>">
-                                <a class="nav-link" href="<?php if ($rsmenus['url'] == "") {
-                                    echo 'javascript:void(0);';
-                                } else {
-                                    echo $rsmenus['url'];
-                                } ?>">
-                                    <?php
-                                    if (!empty($rsmenus["icone"])) {
-                                        ?>
-                                        <i class="fa fa-fw <?= utf8_encode($rsmenus["icone"]) ?>"></i>
-                                        <?php
-                                    }
-                                    ?>
-                                    <span class="nav-link-text"><?php echo utf8_encode($rsmenus['descricao_menu']); ?></span>
-                                </a>
-                            </li>
-                            <?php
-                        } else { //menu com submenu
-                            ?>
-
-                            <li class="nav-item" data-toggle="tooltip" data-placement="right"
-                                title="<?php echo utf8_encode($rsmenus['descricao_menu']); ?>">
-                                <a class="nav-link nav-link-collapse collapsed" <?= utf8_encode($rsmenus['descricao_menu']) == $menu ? "aria-expended=\"true\"" : "" ?>
-                                   data-toggle="collapse" href="#<?= $rsmenus['idmenu'] ?>"
-                                   data-parent="#exampleAccordion">
-                                    <?php
-                                    if (!empty($rsmenus["icone"])) {
-                                        ?>
-                                        <i class="fa fa-fw <?= utf8_encode($rsmenus["icone"]) ?>"></i>
-                                        <?php
-                                    }
-                                    ?>
-                                    <span class="nav-link-text"><?php echo utf8_encode($rsmenus['descricao_menu']); ?></span>
-                                </a>
-                                <ul class="sidenav-second-level collapse <?= (utf8_encode($rsmenus['descricao_menu']) == $menu) ? "show" : "" ?>"
-                                    id="<?= $rsmenus['idmenu'] ?>">
-                                    <?php
-                                    foreach ($listasubmenus as $rssubmenus) {
-                                        ?>
-                                        <li class="<?= (strcasecmp(utf8_encode($rssubmenus['descricao_submenu']), $submenu) === 0) ? "active" : "" ?>" >
-                                            <a href="<?php echo $rssubmenus['url']; ?>"><?php echo utf8_encode($rssubmenus['descricao_submenu']); ?></a>
-                                        </li>
-                                        <?php
-                                    }
-                                    ?>
-                                </ul>
-                            </li>
-                            <?php
-                        }
-                        ?>
-
-                        <?php
+            if (isset($listamenus)) {
+                foreach ($listamenus as $rsmenus) {
+                    if (empty($usu->getTipoEmpresa())) {
+                        $listasubmenus = $submenus->constroiSubMenus($usu->getTipo(), $rsmenus['idmenu']);
+                    } else {
+                        $listasubmenus = $submenus->constroiSubMenusEmpresa($usu->getId(), $rsmenus['idmenu']);
                     }
+            ?>
+
+                    <?php
+                    if (empty($listasubmenus)) { //menu sem sub menu
+                    ?>
+                        <li class="nav-item <?= $rsmenus['descricao_menu'] == $menu ? "active" : "" ?>" data-toggle="tooltip" data-placement="right" title="<?php echo $rsmenus['descricao_menu']; ?>">
+                            <a class="nav-link" href="<?php if ($rsmenus['url'] == "") {
+                                                            echo 'javascript:void(0);';
+                                                        } else {
+                                                            echo $rsmenus['url'];
+                                                        } ?>">
+                                <?php
+                                if (!empty($rsmenus["icone"])) {
+                                ?>
+                                    <i class="fa fa-fw <?= $rsmenus["icone"] ?>"></i>
+                                <?php
+                                }
+                                ?>
+                                <span class="nav-link-text"><?php echo $rsmenus['descricao_menu']; ?></span>
+                            </a>
+                        </li>
+                    <?php
+                    } else { //menu com submenu
+                    ?>
+
+                        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="<?php echo $rsmenus['descricao_menu']; ?>">
+                            <a class="nav-link nav-link-collapse collapsed" <?= $rsmenus['descricao_menu'] == $menu ? "aria-expended=\"true\"" : "" ?> data-toggle="collapse" href="#<?= $rsmenus['idmenu'] ?>" data-parent="#exampleAccordion">
+                                <?php
+                                if (!empty($rsmenus["icone"])) {
+                                ?>
+                                    <i class="fa fa-fw <?= $rsmenus["icone"] ?>"></i>
+                                <?php
+                                }
+                                ?>
+                                <span class="nav-link-text"><?php echo $rsmenus['descricao_menu']; ?></span>
+                            </a>
+                            <ul class="sidenav-second-level collapse <?= ($rsmenus['descricao_menu']) == $menu ? "show" : "" ?>" id="<?= $rsmenus['idmenu'] ?>">
+                                <?php
+                                foreach ($listasubmenus as $rssubmenus) {
+                                ?>
+                                    <li class="<?= (strcasecmp($rssubmenus['descricao_submenu'], $submenu) === 0) ? "active" : "" ?>">
+                                        <a href="<?php echo $rssubmenus['url']; ?>"><?php echo $rssubmenus['descricao_submenu']; ?></a>
+                                    </li>
+                                <?php
+                                }
+                                ?>
+                            </ul>
+                        </li>
+                    <?php
+                    }
+                    ?>
+
+            <?php
                 }
+            }
 
             ?>
 
@@ -117,11 +111,11 @@ $submenus = new SubMenu();
                 <a class="nav-link dropdown-toggle mr-lg-2" id="messagesDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-fw fa-envelope"></i>
                     <span class="d-lg-none">Messages
-                    <span class="badge badge-pill badge-primary">12 New</span>
-                  </span>
+                        <span class="badge badge-pill badge-primary">12 New</span>
+                    </span>
                     <span class="indicator text-primary d-none d-lg-block">
-                    <i class="fa fa-fw fa-circle"></i>
-                  </span>
+                        <i class="fa fa-fw fa-circle"></i>
+                    </span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="messagesDropdown">
                     <h6 class="dropdown-header">New Messages:</h6>
@@ -151,38 +145,38 @@ $submenus = new SubMenu();
                 <a class="nav-link dropdown-toggle mr-lg-2" id="alertsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-fw fa-bell"></i>
                     <span class="d-lg-none">Alerts
-                    <span class="badge badge-pill badge-warning">6 New</span>
-                  </span>
+                        <span class="badge badge-pill badge-warning">6 New</span>
+                    </span>
                     <span class="indicator text-warning d-none d-lg-block">
-                    <i class="fa fa-fw fa-circle"></i>
-                  </span>
+                        <i class="fa fa-fw fa-circle"></i>
+                    </span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="alertsDropdown">
                     <h6 class="dropdown-header">New Alerts:</h6>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">
-                    <span class="text-success">
-                      <strong>
-                        <i class="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
-                    </span>
+                        <span class="text-success">
+                            <strong>
+                                <i class="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
+                        </span>
                         <span class="small float-right text-muted">11:21 AM</span>
                         <div class="dropdown-message small">This is an automated server response message. All systems are online.</div>
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">
-                    <span class="text-danger">
-                      <strong>
-                        <i class="fa fa-long-arrow-down fa-fw"></i>Status Update</strong>
-                    </span>
+                        <span class="text-danger">
+                            <strong>
+                                <i class="fa fa-long-arrow-down fa-fw"></i>Status Update</strong>
+                        </span>
                         <span class="small float-right text-muted">11:21 AM</span>
                         <div class="dropdown-message small">This is an automated server response message. All systems are online.</div>
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#">
-                    <span class="text-success">
-                      <strong>
-                        <i class="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
-                    </span>
+                        <span class="text-success">
+                            <strong>
+                                <i class="fa fa-long-arrow-up fa-fw"></i>Status Update</strong>
+                        </span>
                         <span class="small float-right text-muted">11:21 AM</span>
                         <div class="dropdown-message small">This is an automated server response message. All systems are online.</div>
                     </a>
@@ -195,10 +189,10 @@ $submenus = new SubMenu();
                     <div class="input-group">
                         <input class="form-control" type="text" placeholder="Buscar por...">
                         <span class="input-group-append">
-                      <button class="btn btn-primary" type="button">
-                        <i class="fa fa-search"></i>
-                      </button>
-                    </span>
+                            <button class="btn btn-primary" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
                     </div>
                 </form>
             </li>
@@ -209,4 +203,3 @@ $submenus = new SubMenu();
         </ul>
     </div>
 </nav>
-

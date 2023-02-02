@@ -13,9 +13,9 @@ session_name($nome_session);
 ob_start();
 session_start();
 
-$baseurl = "http://localhost:8080/delivery_free/";
+$baseurl = "http://localhost/";
 $uri = true;
-$valor_uri = "delivery_free";
+$valor_uri = "";
 
 $POS_URI_ID = 1;
 

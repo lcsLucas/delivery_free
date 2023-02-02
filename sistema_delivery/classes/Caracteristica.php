@@ -21,7 +21,7 @@ class Caracteristica implements Interfaceclasses
      * @param $idEmpresa
      * @param $idTipo
      */
-    public function __construct($nome="", $valor_adicional="", $ativo="", $idEmpresa="", $idTipo="")
+    public function __construct($nome = "", $valor_adicional = "", $ativo = "", $idEmpresa = "", $idTipo = "")
     {
         $this->nome = $nome;
         $this->valor_adicional = $valor_adicional;
@@ -129,18 +129,22 @@ class Caracteristica implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud();
-        $resp = $crud->Inserir("caracteristica", array("car_nome",
-                                                              "car_valor",
-                                                              "car_ativo",
-                                                              "tip_id",
-                                                              "emp_id"
-                                                            ),
-                                                            array(utf8_decode($this->nome),
-                                                                  utf8_decode($this->valor_adicional),
-                                                                  $this->ativo,
-                                                                  $this->idTipo,
-                                                                  $this->idEmpresa
-                                                                )
+        $resp = $crud->Inserir(
+            "caracteristica",
+            array(
+                "car_nome",
+                "car_valor",
+                "car_ativo",
+                "tip_id",
+                "emp_id"
+            ),
+            array(
+                utf8_decode($this->nome),
+                utf8_decode($this->valor_adicional),
+                $this->ativo,
+                $this->idTipo,
+                $this->idEmpresa
+            )
         );
 
         return $resp;
@@ -149,11 +153,15 @@ class Caracteristica implements Interfaceclasses
     public function alterar()
     {
         $crud = new Crud();
-        $resp = $crud->AlteraCondicoes("caracteristica", array("car_nome",
-            "car_valor",
-            "tip_id"
-        ),
-            array(utf8_decode($this->nome),
+        $resp = $crud->AlteraCondicoes(
+            "caracteristica",
+            array(
+                "car_nome",
+                "car_valor",
+                "tip_id"
+            ),
+            array(
+                utf8_decode($this->nome),
                 utf8_decode($this->valor_adicional),
                 $this->idTipo
             ),
@@ -180,15 +188,15 @@ class Caracteristica implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "SELECT COUNT(*) total FROM caracteristica c INNER JOIN tipo_caracteristicas tc ON c.tip_id = tc.tip_id where (lower(car_nome) like ? OR lower(tip_nome) like ?) AND c.emp_id = ? ";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%","%".strtolower(tiraacento($filtro))."%", $this->idEmpresa));
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%", "%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa));
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM caracteristica c INNER JOIN tipo_caracteristicas tc ON c.tip_id = tc.tip_id WHERE c.emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -200,7 +208,7 @@ class Caracteristica implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "SELECT c.car_id, c.car_nome, tc.tip_nome, car_ativo FROM caracteristica c INNER JOIN tipo_caracteristicas tc ON c.tip_id = tc.tip_id where (lower(car_nome) like ? OR lower(tip_nome) like ?) AND c.emp_id = ? order by c.car_nome LIMIT ?, ?";
             $res = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%", "%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa, $inicio, $fim));
         } else {
@@ -217,8 +225,8 @@ class Caracteristica implements Interfaceclasses
         $resp = $crud->Consulta("caracteristica WHERE car_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["car_nome"]);
-            $this->valor_adicional = number_format($resp[0]["car_valor"], 2, ",", ".") ;
+            $this->nome = $resp[0]["car_nome"];
+            $this->valor_adicional = number_format($resp[0]["car_valor"], 2, ",", ".");
             $this->ativo = $resp[0]["car_ativo"];
             $this->idTipo = $resp[0]["tip_id"];
 
@@ -228,14 +236,15 @@ class Caracteristica implements Interfaceclasses
         return false;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select car_ativo from caracteristica where car_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['car_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -244,5 +253,4 @@ class Caracteristica implements Interfaceclasses
 
         return $resp;
     }
-
 }

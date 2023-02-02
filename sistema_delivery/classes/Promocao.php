@@ -30,7 +30,7 @@ class Promocao implements Interfaceclasses
      * @param $desconto_valor
      * @param $desconto_porcentagem
      */
-    public function __construct($nome="", $tipo="", $data_inicial="", $data_final="", $cupom="", $ativo="", $tipo_desconto="", $desconto_valor=0.0, $desconto_porcentagem=0.0)
+    public function __construct($nome = "", $tipo = "", $data_inicial = "", $data_final = "", $cupom = "", $ativo = "", $tipo_desconto = "", $desconto_valor = 0.0, $desconto_porcentagem = 0.0)
     {
         $this->nome = $nome;
         $this->tipo = $tipo;
@@ -239,14 +239,16 @@ class Promocao implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud();
-        $resp = $crud->buscaAtributos("count(*) total", "promocao WHERE emp_id = ". $this->idEmpresa ." AND pro_cupom = '". utf8_decode($this->cupom) ."'");
+        $resp = $crud->buscaAtributos("count(*) total", "promocao WHERE emp_id = " . $this->idEmpresa . " AND pro_cupom = '" . utf8_decode($this->cupom) . "'");
 
         if (!empty($resp)) {
             if (!empty($resp[0]["total"])) {
                 $resp = false;
-            }else {
-                $resp = $crud->Inserir("promocao",
-                    array("pro_nome",
+            } else {
+                $resp = $crud->Inserir(
+                    "promocao",
+                    array(
+                        "pro_nome",
                         "pro_tipo",
                         "pro_dtInicio",
                         "pro_dtFinal",
@@ -276,10 +278,13 @@ class Promocao implements Interfaceclasses
         return $resp;
     }
 
-    public function inserir2() {
+    public function inserir2()
+    {
         $crud = new Crud(true);
-        $resp = $crud->Inserir("promocao",
-            array("pro_nome",
+        $resp = $crud->Inserir(
+            "promocao",
+            array(
+                "pro_nome",
                 "pro_tipo",
                 "pro_dtInicio",
                 "pro_dtFinal",
@@ -320,7 +325,6 @@ class Promocao implements Interfaceclasses
                 $resp = $crud->Inserir('promocao_tem_produtos', array('promocao_id', 'produto_id', 'desc_porcentagem', 'desc_valor', 'tipo_desconto'), array($this->id, $this->produtos['id'][$i], $val1, $val2, $this->produtos['desc_tipo'][$i]));
                 $i++;
             }
-
         }
 
         $crud->executar($resp);
@@ -331,15 +335,17 @@ class Promocao implements Interfaceclasses
     {
         $crud = new Crud();
 
-        $resp = $crud->buscaAtributos("count(*) total", "promocao WHERE pro_id <> ". $this->id ." AND pro_cupom = '". utf8_decode($this->cupom) ."'");
+        $resp = $crud->buscaAtributos("count(*) total", "promocao WHERE pro_id <> " . $this->id . " AND pro_cupom = '" . utf8_decode($this->cupom) . "'");
 
         if (!empty($resp)) {
             if (!empty($resp[0]["total"])) {
                 $this->retorno = "Já existe um modelo com esse nome";
                 $resp = false;
             } else {
-                $resp = $crud->AlteraCondicoes("promocao",
-                    array("pro_nome",
+                $resp = $crud->AlteraCondicoes(
+                    "promocao",
+                    array(
+                        "pro_nome",
                         "pro_tipo",
                         "pro_dtInicio",
                         "pro_dtFinal",
@@ -368,11 +374,14 @@ class Promocao implements Interfaceclasses
         return $resp;
     }
 
-    public function alterar2() {
+    public function alterar2()
+    {
         $crud = new Crud(true);
 
-        $resp = $crud->AlteraCondicoes("promocao",
-            array("pro_nome",
+        $resp = $crud->AlteraCondicoes(
+            "promocao",
+            array(
+                "pro_nome",
                 "pro_dtInicio",
                 "pro_dtFinal",
                 "pro_desc_valor",
@@ -411,9 +420,7 @@ class Promocao implements Interfaceclasses
                     $resp = $crud->Inserir('promocao_tem_produtos', array('promocao_id', 'produto_id', 'desc_porcentagem', 'desc_valor', 'tipo_desconto'), array($this->id, $this->produtos['id'][$i], $val1, $val2, $this->produtos['desc_tipo'][$i]));
                     $i++;
                 }
-
             }
-
         }
 
         $crud->executar($resp);
@@ -427,7 +434,7 @@ class Promocao implements Interfaceclasses
         $resp = $crud->Excluir("promocao_tem_produtos", "promocao_id", $this->id);
 
         if ($resp)
-            $resp = $crud->ExcluirCondicoes("promocao", "pro_id = ". $this->id ." AND emp_id = " . $this->idEmpresa);
+            $resp = $crud->ExcluirCondicoes("promocao", "pro_id = " . $this->id . " AND emp_id = " . $this->idEmpresa);
 
         $crud->executar($resp);
         return $resp;
@@ -438,29 +445,32 @@ class Promocao implements Interfaceclasses
         // TODO: Implement listar() method.
     }
 
-	public function quantidadeRegistros($filtro, $chaves = "") {}
+    public function quantidadeRegistros($filtro, $chaves = "")
+    {
+    }
 
 
-	public function listarPaginacao($filtro, $inicio, $fim, $chaves = "") {}
+    public function listarPaginacao($filtro, $inicio, $fim, $chaves = "")
+    {
+    }
 
 
-	public function quantidadeRegistros2($periodo1, $periodo2)
+    public function quantidadeRegistros2($periodo1, $periodo2)
     {
         $crud = new Crud(FALSE);
 
-		if(!empty($periodo1) && !empty($periodo2)){
+        if (!empty($periodo1) && !empty($periodo2)) {
 
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
 
-			$resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal", array($this->idEmpresa, $periodo1, $periodo2));
-
+            $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal", array($this->idEmpresa, $periodo1, $periodo2));
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -468,41 +478,39 @@ class Promocao implements Interfaceclasses
         return  ceil(($total));
     }
 
-	public function quantidadeRegistros3($periodo1, $periodo2)
-	{
-		$crud = new Crud(FALSE);
-
-		if(!empty($periodo1) && !empty($periodo2)){
-
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
-
-			$resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal", array($this->idEmpresa, $periodo1, $periodo2));
-
-		} else {
-			$resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ?", array($this->idEmpresa));
-		}
-
-		if(!empty($resp)){
-			foreach ($resp as $rsr){
-				$total = $rsr['total'];
-			}
-		}
-
-		return  ceil(($total));
-	}
-
-	public function listarPaginacao2($periodo1, $periodo2, $inicio, $fim)
+    public function quantidadeRegistros3($periodo1, $periodo2)
     {
         $crud = new Crud(FALSE);
 
-		if(!empty($periodo1) && !empty($periodo2)){
+        if (!empty($periodo1) && !empty($periodo2)) {
 
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
 
-			$res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $periodo1, $periodo2, $inicio, $fim));
+            $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal", array($this->idEmpresa, $periodo1, $periodo2));
+        } else {
+            $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ?", array($this->idEmpresa));
+        }
 
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
+                $total = $rsr['total'];
+            }
+        }
+
+        return  ceil(($total));
+    }
+
+    public function listarPaginacao2($periodo1, $periodo2, $inicio, $fim)
+    {
+        $crud = new Crud(FALSE);
+
+        if (!empty($periodo1) && !empty($periodo2)) {
+
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
+
+            $res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $periodo1, $periodo2, $inicio, $fim));
         } else {
             $res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 1 AND p.emp_id = ? order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $inicio, $fim));
         }
@@ -510,23 +518,22 @@ class Promocao implements Interfaceclasses
         return $res;
     }
 
-	public function listarPaginacao3($periodo1, $periodo2, $inicio, $fim)
-	{
-		$crud = new Crud(FALSE);
+    public function listarPaginacao3($periodo1, $periodo2, $inicio, $fim)
+    {
+        $crud = new Crud(FALSE);
 
-		if(!empty($periodo1) && !empty($periodo2)){
+        if (!empty($periodo1) && !empty($periodo2)) {
 
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
 
-			$res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $periodo1, $periodo2, $inicio, $fim));
+            $res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $periodo1, $periodo2, $inicio, $fim));
+        } else {
+            $res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $inicio, $fim));
+        }
 
-		} else {
-			$res = $crud->ConsultaGenerica("SELECT * FROM promocao p WHERE pro_tipo = 0 AND p.emp_id = ? order by p.pro_id desc LIMIT ?, ?", array($this->idEmpresa, $inicio, $fim));
-		}
-
-		return $res;
-	}
+        return $res;
+    }
 
     public function carregar()
     {
@@ -534,8 +541,8 @@ class Promocao implements Interfaceclasses
         $resp = $crud->Consulta("promocao WHERE pro_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["pro_nome"]);
-            $this->cupom = utf8_encode($resp[0]["pro_cupom"]);
+            $this->nome = $resp[0]["pro_nome"];
+            $this->cupom = $resp[0]["pro_cupom"];
             $this->tipo = $resp[0]["pro_tipo"];
             $this->data_inicial = date("d/m/Y", strtotime($resp[0]["pro_dtInicio"]));
             $this->data_final = date("d/m/Y", strtotime($resp[0]["pro_dtFinal"]));
@@ -554,12 +561,10 @@ class Promocao implements Interfaceclasses
                         $array_prod['id'][] = $prod['produto_id'];
                         $array_prod['desc_valor'][] = (intval($prod['tipo_desconto']) === 1) ? floatval($prod['desc_porcentagem']) : floatval($prod['desc_valor']);
                         $array_prod['desc_tipo'][] = intval($prod['tipo_desconto']);
-
                     }
 
                     $this->produtos = $array_prod;
                 }
-
             }
 
             return true;
@@ -568,14 +573,15 @@ class Promocao implements Interfaceclasses
         return false;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select pro_ativo from promocao where pro_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['pro_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -585,38 +591,37 @@ class Promocao implements Interfaceclasses
         return $resp;
     }
 
-    public function listarRelatorio($periodo1, $periodo2) {
-		$crud = new Crud(FALSE);
+    public function listarRelatorio($periodo1, $periodo2)
+    {
+        $crud = new Crud(FALSE);
 
-		if(!empty($periodo1) && !empty($periodo2)){
+        if (!empty($periodo1) && !empty($periodo2)) {
 
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
 
-			$res = $crud->Consulta("promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc", array($this->idEmpresa, $periodo1, $periodo2));
-		}
-		else {
-			$res = $crud->Consulta("promocao p WHERE pro_tipo = 1 AND p.emp_id = ? order by p.pro_id desc", array($this->idEmpresa));
-		}
+            $res = $crud->Consulta("promocao p WHERE pro_tipo = 1 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc", array($this->idEmpresa, $periodo1, $periodo2));
+        } else {
+            $res = $crud->Consulta("promocao p WHERE pro_tipo = 1 AND p.emp_id = ? order by p.pro_id desc", array($this->idEmpresa));
+        }
 
-		return $res;
-	}
+        return $res;
+    }
 
-	public function listarRelatorio2($periodo1, $periodo2) {
-		$crud = new Crud(FALSE);
+    public function listarRelatorio2($periodo1, $periodo2)
+    {
+        $crud = new Crud(FALSE);
 
-		if(!empty($periodo1) && !empty($periodo2)){
+        if (!empty($periodo1) && !empty($periodo2)) {
 
-			$periodo1 = trataData($periodo1);
-			$periodo2 = trataData($periodo2);
+            $periodo1 = trataData($periodo1);
+            $periodo2 = trataData($periodo2);
 
-			$res = $crud->Consulta("promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc", array($this->idEmpresa, $periodo1, $periodo2));
-		}
-		else {
-			$res = $crud->Consulta("promocao p WHERE pro_tipo = 0 AND p.emp_id = ? order by p.pro_id desc", array($this->idEmpresa));
-		}
+            $res = $crud->Consulta("promocao p WHERE pro_tipo = 0 AND p.emp_id = ? AND ? >= pro_dtInicio AND ? <= pro_dtFinal order by p.pro_id desc", array($this->idEmpresa, $periodo1, $periodo2));
+        } else {
+            $res = $crud->Consulta("promocao p WHERE pro_tipo = 0 AND p.emp_id = ? order by p.pro_id desc", array($this->idEmpresa));
+        }
 
-		return $res;
-	}
-
+        return $res;
+    }
 }

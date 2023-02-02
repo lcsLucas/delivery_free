@@ -19,7 +19,7 @@ class CategoriaProdutos implements Interfaceclasses
      * @param $ativo
      * @param $idEmpresa
      */
-    public function __construct($nome="", $descricao="", $ativo="", $idEmpresa="")
+    public function __construct($nome = "", $descricao = "", $ativo = "", $idEmpresa = "")
     {
         $this->nome = $nome;
         $this->descricao = $descricao;
@@ -135,28 +135,32 @@ class CategoriaProdutos implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud();
-        $resp = $crud->Inserir("categoria_produtos",
-            array("cat_nome",
-                  "cat_descricao",
-                  "cat_ativo",
-                  "emp_id"
-                ),
-            array(utf8_decode($this->nome),
+        $resp = $crud->Inserir(
+            "categoria_produtos",
+            array(
+                "cat_nome",
+                "cat_descricao",
+                "cat_ativo",
+                "emp_id"
+            ),
+            array(
+                utf8_decode($this->nome),
                 utf8_decode($this->descricao),
-                  $this->ativo,
-                  $this->idEmpresa
+                $this->ativo,
+                $this->idEmpresa
             )
         );
 
         if ($resp && !empty($this->complementos)) {
-        	$this->id = $crud->getUltimoCodigo();
+            $this->id = $crud->getUltimoCodigo();
             $complementos = $this->complementos;
             $total = count($complementos);
             $i = 0;
 
             while ($i < $total && $resp) {
 
-                $resp = $crud->Inserir('categoria_complementos',
+                $resp = $crud->Inserir(
+                    'categoria_complementos',
                     array(
                         'catcom_nome',
                         'catcom_obrigatorio',
@@ -190,9 +194,10 @@ class CategoriaProdutos implements Interfaceclasses
                             $preco = !empty($opcoes['preco'][$j]) ? $opcoes['preco'][$j] : 0;
 
                             $preco = str_replace(".", "", $preco);
-                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-                            $resp = $crud->Inserir('categoria_tem_complementos',
+                            $resp = $crud->Inserir(
+                                'categoria_tem_complementos',
                                 array(
                                     'cat_id',
                                     'catcom_id',
@@ -214,14 +219,11 @@ class CategoriaProdutos implements Interfaceclasses
 
                         if (empty($resp))
                             $resp = $crud->Excluir('categoria_complementos', 'catcom_id', $idcomplemento);
-
                     }
-
                 }
 
                 $i++;
             }
-
         }
 
         return $resp;
@@ -230,8 +232,11 @@ class CategoriaProdutos implements Interfaceclasses
     public function alterar()
     {
         $crud = new Crud();
-        $resp = $crud->AlteraCondicoes("categoria_produtos", array(
-            "cat_nome", "cat_descricao"),
+        $resp = $crud->AlteraCondicoes(
+            "categoria_produtos",
+            array(
+                "cat_nome", "cat_descricao"
+            ),
             array(utf8_decode($this->nome), utf8_decode($this->descricao)),
             "cat_id = " . $this->id . " AND emp_id = " . $this->idEmpresa
         );
@@ -246,7 +251,8 @@ class CategoriaProdutos implements Interfaceclasses
 
             while ($i < $total && $resp) {
 
-                $resp = $crud->Inserir('categoria_complementos',
+                $resp = $crud->Inserir(
+                    'categoria_complementos',
                     array(
                         'catcom_nome',
                         'catcom_obrigatorio',
@@ -280,9 +286,10 @@ class CategoriaProdutos implements Interfaceclasses
                             $preco = !empty($opcoes['preco'][$j]) ? $opcoes['preco'][$j] : 0;
 
                             $preco = str_replace(".", "", $preco);
-                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-                            $resp = $crud->Inserir('categoria_tem_complementos',
+                            $resp = $crud->Inserir(
+                                'categoria_tem_complementos',
                                 array(
                                     'cat_id',
                                     'catcom_id',
@@ -304,14 +311,11 @@ class CategoriaProdutos implements Interfaceclasses
 
                         if (empty($resp))
                             $resp = $crud->Excluir('categoria_complementos', 'catcom_id', $idcomplemento);
-
                     }
-
                 }
 
                 $i++;
             }
-
         }
 
         return $resp;
@@ -337,15 +341,15 @@ class CategoriaProdutos implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "select count(*) total from categoria_produtos where lower(ins_nome) like ? AND emp_id = ? ";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%"), $this->idEmpresa);
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%"), $this->idEmpresa);
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM categoria_produtos WHERE emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -357,11 +361,10 @@ class CategoriaProdutos implements Interfaceclasses
     {
         $crud = new Crud();
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "categoria_produtos where lower(cat_nome) like ? AND emp_id = ? order by cat_nome LIMIT ?, ?;";
-            $res = $crud->Consulta($sql, array("%".strtolower(tiraacento($filtro))."%", $this->idEmpresa, $inicio, $fim));
-        }
-        else {
+            $res = $crud->Consulta($sql, array("%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa, $inicio, $fim));
+        } else {
             $res = $crud->Consulta("categoria_produtos WHERE emp_id = ? order by cat_nome LIMIT ?, ?;", array($this->idEmpresa, $inicio, $fim));
         }
 
@@ -374,8 +377,8 @@ class CategoriaProdutos implements Interfaceclasses
         $resp = $crud->Consulta("categoria_produtos WHERE cat_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["cat_nome"]);
-            $this->descricao = html_entity_decode(utf8_encode($resp[0]["cat_descricao"]));
+            $this->nome = $resp[0]["cat_nome"];
+            $this->descricao = html_entity_decode($resp[0]["cat_descricao"]);
             $this->ativo = $resp[0]["cat_ativo"];
 
             if ($resp) {
@@ -392,12 +395,10 @@ class CategoriaProdutos implements Interfaceclasses
                             $comp['opcoes'] = $resp_opcoes;
                             $resp_comp[$i] = $comp;
                         }
-
                     }
 
                     $this->complementos = $resp_comp;
                 }
-
             }
 
             return true;
@@ -406,7 +407,8 @@ class CategoriaProdutos implements Interfaceclasses
         return false;
     }
 
-    public function carregar_complementos() {
+    public function carregar_complementos()
+    {
         $crud = new Crud();
 
         $resp_comp = $crud->Consulta('categoria_complementos WHERE cat_pro_id = ? AND emp_id = ? ORDER BY catcom_obrigatorio DESC', array($this->id, $this->idEmpresa));
@@ -421,22 +423,21 @@ class CategoriaProdutos implements Interfaceclasses
                     $comp['opcoes'] = $resp_opcoes;
                     $resp_comp[$i] = $comp;
                 }
-
             }
-
         }
 
         return $resp_comp;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select cat_ativo from categoria_produtos where cat_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['cat_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -445,5 +446,4 @@ class CategoriaProdutos implements Interfaceclasses
 
         return $resp;
     }
-
 }

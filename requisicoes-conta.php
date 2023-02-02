@@ -16,7 +16,7 @@ $retorno = array(
     "titulo" => ""
 );
 
-if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//requisição do tipo POST
+if (htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') { //requisição do tipo POST
 
     if (filter_has_var(INPUT_POST, "btnCadastro")) {
         $nome = trim(SQLinjection(filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS)));
@@ -33,7 +33,7 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
             $retorno["titulo"] = "Campos Incorretos";
             $retorno["status"] = false;
             $retorno["mensagem"] = "Existem campos não preenchidos ou preenchidos incorretamente!";
-        } else if(strcmp($senha, $senha2) !== 0) {
+        } else if (strcmp($senha, $senha2) !== 0) {
             $retorno["titulo"] = "As senhas não batem";
             $retorno["status"] = false;
             $retorno["mensagem"] = "As senhas informadas estão diferentes, por favor corrija";
@@ -45,9 +45,9 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
             $cliente->setFone($celular);
             $cliente->setFone2($celular2);
 
-            if ($data_nascimento) 
-            	$cliente->setNascimento(trataData($data_nascimento));
-            
+            if ($data_nascimento)
+                $cliente->setNascimento(trataData($data_nascimento));
+
             $cliente->setSenha($senha);
             $cliente->setAtivo(1);
             $cliente->setFlagDelivery(1);
@@ -65,10 +65,8 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
 
                         if (!empty($_SESSION['continuar']))
                             unset($_SESSION['continuar']);
-
-                    }else
+                    } else
                         $retorno['pagina_redirecionada'] = $baseurl . 'minha-conta';
-
                 } else {
                     $retorno["titulo"] = "Erro ao fazer o cadastro";
                     $retorno["status"] = false;
@@ -77,12 +75,10 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
             } else {
                 $retorno = $cliente->getRetorno();
             }
-
         }
 
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-
-    } else if(filter_has_var(INPUT_POST, "btnLogin")) {
+    } else if (filter_has_var(INPUT_POST, "btnLogin")) {
         $usuario = trim(SQLinjection(filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_SPECIAL_CHARS)));
         $senha = trim(filter_input(INPUT_POST, 'senha', FILTER_SANITIZE_SPECIAL_CHARS));
 
@@ -107,22 +103,19 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
 
                     if (!empty($_SESSION['continuar']))
                         unset($_SESSION['continuar']);
+                } elseif (!empty($_SESSION['pagina_restaurante'])) {
+                    $retorno['pagina_redirecionada'] = $_SESSION['pagina_restaurante'];
 
-                } elseif(!empty($_SESSION['pagina_restaurante'])) {
-					$retorno['pagina_redirecionada'] = $_SESSION['pagina_restaurante'];
-
-					if (!empty($_SESSION['continuar']))
-						unset($_SESSION['continuar']);
-				} else
+                    if (!empty($_SESSION['continuar']))
+                        unset($_SESSION['continuar']);
+                } else
                     $retorno['pagina_redirecionada'] = $baseurl . 'minha-conta';
-
             } else {
                 $retorno = $cliente->getRetorno();
             }
-
         }
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-    } else if(filter_has_var(INPUT_POST, "btnAlterar")) {
+    } else if (filter_has_var(INPUT_POST, "btnAlterar")) {
         $nome = trim(SQLinjection(filter_input(INPUT_POST, 'nome', FILTER_SANITIZE_SPECIAL_CHARS)));
         $celular = trim(SQLinjection(filter_input(INPUT_POST, 'celular', FILTER_SANITIZE_SPECIAL_CHARS)));
         $celular2 = trim(SQLinjection(filter_input(INPUT_POST, 'celular2', FILTER_SANITIZE_SPECIAL_CHARS)));
@@ -138,10 +131,10 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
             $cliente->setFone($celular);
 
             if (!empty($celular2))
-            	$cliente->setFone2($celular2);
+                $cliente->setFone2($celular2);
 
             if (!empty($data_nascimento))
-            	$cliente->setNascimento(trataData($data_nascimento));
+                $cliente->setNascimento(trataData($data_nascimento));
 
             if ($cliente->alterarDadosSite()) {
                 $retorno["titulo"] = "Sucesso";
@@ -155,7 +148,7 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
         }
 
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-    } else if(filter_has_var(INPUT_POST, "btnAlteraSenha")) {
+    } else if (filter_has_var(INPUT_POST, "btnAlteraSenha")) {
         $senha = trim(filter_input(INPUT_POST, 'senha', FILTER_SANITIZE_SPECIAL_CHARS));
         $senha2 = trim(filter_input(INPUT_POST, 'senha2', FILTER_SANITIZE_SPECIAL_CHARS));
         $senha_nova = trim(filter_input(INPUT_POST, 'senha_nova', FILTER_SANITIZE_SPECIAL_CHARS));
@@ -164,7 +157,7 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
             $retorno["titulo"] = "Campos Incorretos";
             $retorno["status"] = false;
             $retorno["mensagem"] = "Existem campos não preenchidos ou preenchidos incorretamente!";
-        } else if(strcmp($senha_nova, $senha2) !== 0) {
+        } else if (strcmp($senha_nova, $senha2) !== 0) {
             $retorno["titulo"] = "As senhas não batem";
             $retorno["status"] = false;
             $retorno["mensagem"] = "As senhas informadas estão diferentes, por favor corrija";
@@ -176,17 +169,16 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                 $retorno["titulo"] = "Sucesso";
                 $retorno["status"] = true;
                 $retorno["mensagem"] = "Senha alterada com sucesso!";
-            } else if(!empty($cliente->getRetorno())){
+            } else if (!empty($cliente->getRetorno())) {
                 $retorno = $cliente->getRetorno();
-            } else{
+            } else {
                 $retorno["titulo"] = "Erro";
                 $retorno["status"] = false;
                 $retorno["mensagem"] = "Não foi possível alterar a senha, atualize a página e tente novamente!";
             }
-
         }
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-    } else if(filter_has_var(INPUT_POST, "btnAddEndereco")) {
+    } else if (filter_has_var(INPUT_POST, "btnAddEndereco")) {
         $descricao = trim(SQLinjection(filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_SPECIAL_CHARS)));
         $rua = trim(SQLinjection(filter_input(INPUT_POST, 'rua', FILTER_SANITIZE_SPECIAL_CHARS)));
         $bairro = trim(SQLinjection(filter_input(INPUT_POST, 'bairro', FILTER_SANITIZE_SPECIAL_CHARS)));
@@ -216,10 +208,10 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                     foreach ($todos_enderecos as $item) {
                         $array_extra[] = array(
                             "id" => $item["end_id"],
-                            "rua" => utf8_encode($item["end_rua"]),
+                            "rua" => $item["end_rua"],
                             "numero" => $item["end_numero"],
-                            "descricao" => utf8_encode($item["end_descricao"]),
-                            "cidade" => utf8_encode($item["cid_nome"]),
+                            "descricao" => $item["end_descricao"],
+                            "cidade" => $item["cid_nome"],
                             "favorito" => $item["end_favorito"]
                         );
                     }
@@ -231,18 +223,16 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                 $retorno['url_finalizar'] = $baseurl . 'finalizar-pedido';
                 $retorno["mensagem"] = "Endereço adicionado com sucesso!";
                 $retorno["extra"] = $array_extra;
-            } else if(!empty($cliente->getRetorno())){
+            } else if (!empty($cliente->getRetorno())) {
                 $retorno = $cliente->getRetorno();
             } else {
                 $retorno["titulo"] = "Erro";
                 $retorno["status"] = false;
                 $retorno["mensagem"] = "Não foi possível adicionar o endereço, atualize a página e tente novamente!";
             }
-
-
         }
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-    } else if(filter_has_var(INPUT_POST, "excluir_endereco")) {
+    } else if (filter_has_var(INPUT_POST, "excluir_endereco")) {
         $id_endereco = trim(SQLinjection(filter_input(INPUT_POST, 'endereco_id', FILTER_VALIDATE_INT)));
 
         if (empty($id_endereco)) {
@@ -261,10 +251,10 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                     foreach ($todos_enderecos as $item) {
                         $array_extra[] = array(
                             "id" => $item["end_id"],
-                            "rua" => utf8_encode($item["end_rua"]),
+                            "rua" => $item["end_rua"],
                             "numero" => $item["end_numero"],
-                            "descricao" => utf8_encode($item["end_descricao"]),
-                            "cidade" => utf8_encode($item["cid_nome"]),
+                            "descricao" => $item["end_descricao"],
+                            "cidade" => $item["cid_nome"],
                             "favorito" => $item["end_favorito"]
                         );
                     }
@@ -279,10 +269,9 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                 $retorno["status"] = false;
                 $retorno["mensagem"] = "Não foi possível excluir o endereço, atualize a página e tente novamente!";
             }
-
         }
         echo json_encode($retorno, JSON_FORCE_OBJECT);
-    } else if(filter_has_var(INPUT_POST, "favorita-endereco")) {
+    } else if (filter_has_var(INPUT_POST, "favorita-endereco")) {
         $id_endereco = trim(SQLinjection(filter_input(INPUT_POST, 'endereco_id', FILTER_VALIDATE_INT)));
 
         if (empty($id_endereco)) {
@@ -300,14 +289,12 @@ if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'POST') {//req
                 $retorno["status"] = false;
                 $retorno["mensagem"] = "Não foi possível favoritar o endereço, atualize a página e tente novamente!";
             }
-
         }
 
         echo json_encode($retorno, JSON_FORCE_OBJECT);
     }
-
-} else if(htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'GET') {//requisição do tipo POST
-    if(filter_has_var(INPUT_GET, "sair")) {
+} else if (htmlspecialchars(SQLinjection($_SERVER["REQUEST_METHOD"])) === 'GET') { //requisição do tipo POST
+    if (filter_has_var(INPUT_GET, "sair")) {
         session_destroy();
         header("Location: ./login");
         exit;

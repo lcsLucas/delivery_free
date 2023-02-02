@@ -38,7 +38,7 @@ class Produto implements Interfaceclasses
      * @param $idFornecedor
      * @param $idEmpresa
      */
-    public function __construct($nome="", $controle_estoque="", $obs="", $idUnidade="", $idCategoria="", $idFornecedor="", $idEmpresa="")
+    public function __construct($nome = "", $controle_estoque = "", $obs = "", $idUnidade = "", $idCategoria = "", $idFornecedor = "", $idEmpresa = "")
     {
         $this->nome = $nome;
         $this->dtCad = date("Y-m-d");
@@ -322,8 +322,10 @@ class Produto implements Interfaceclasses
     public function inserir()
     {
         $crud = new Crud(true);
-        $resp = $crud->Inserir("produto",
-            array("pro_nome",
+        $resp = $crud->Inserir(
+            "produto",
+            array(
+                "pro_nome",
                 "pro_dtCad",
                 "pro_descricao",
                 "pro_controle_estoque",
@@ -352,7 +354,7 @@ class Produto implements Interfaceclasses
 
         if ($resp && !empty($this->file_imagem)) {
             $this->id = $crud->getUltimoCodigo();
-            $nomeimg = $this->id."_".date("YmdHis");
+            $nomeimg = $this->id . "_" . date("YmdHis");
 
             $nome_final = $this->salvarImagem($nomeimg);
 
@@ -369,7 +371,8 @@ class Produto implements Interfaceclasses
 
             while ($i < $total && $resp) {
 
-                $resp = $crud->Inserir('categoria_complementos',
+                $resp = $crud->Inserir(
+                    'categoria_complementos',
                     array(
                         'catcom_nome',
                         'catcom_obrigatorio',
@@ -403,9 +406,10 @@ class Produto implements Interfaceclasses
                             $preco = !empty($opcoes['preco'][$j]) ? $opcoes['preco'][$j] : 0;
 
                             $preco = str_replace(".", "", $preco);
-                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-                            $resp = $crud->Inserir('produto_tem_complementos',
+                            $resp = $crud->Inserir(
+                                'produto_tem_complementos',
                                 array(
                                     'pro_id',
                                     'catcom_id',
@@ -427,14 +431,11 @@ class Produto implements Interfaceclasses
 
                         if (empty($resp))
                             $resp = $crud->Excluir('categoria_complementos', 'catcom_id', $idcomplemento);
-
                     }
-
                 }
 
                 $i++;
             }
-
         }
 
         $crud->executar($resp);
@@ -445,8 +446,10 @@ class Produto implements Interfaceclasses
     {
         $crud = new Crud(true);
 
-        $resp = $crud->AlteraCondicoes("produto",
-            array("pro_nome",
+        $resp = $crud->AlteraCondicoes(
+            "produto",
+            array(
+                "pro_nome",
                 "pro_dtCad",
                 "pro_descricao",
                 "pro_controle_estoque",
@@ -483,7 +486,7 @@ class Produto implements Interfaceclasses
                     $this->excluirImagens($this->nome_imagem);
                 }
 
-                $nomeimg = $this->id."_".date("YmdHis");
+                $nomeimg = $this->id . "_" . date("YmdHis");
                 $nome_final = $this->salvarImagem($nomeimg);
 
                 $resp = $crud->Altera("produto", array("pro_foto"), array(utf8_decode($nome_final)), "pro_id", $this->id);
@@ -491,7 +494,6 @@ class Produto implements Interfaceclasses
                 if (empty($resp))
                     $this->excluirImagens($nome_final);
             }
-
         }
 
         if ($resp)
@@ -504,23 +506,24 @@ class Produto implements Interfaceclasses
 
             while ($i < $total && $resp) {
 
-                $resp = $crud->Inserir('categoria_complementos',
-                                                                        array(
-                                                                            'catcom_nome',
-                                                                            'catcom_obrigatorio',
-                                                                            'catcom_qtdemin',
-                                                                            'catcom_qtdemax',
-                                                                            'pro_id',
-                                                                            'emp_id'
-                                                                        ),
-                                                                        array(
-                                                                            utf8_decode($complementos[$i]['nome']),
-                                                                            $complementos[$i]['flag_obrigatorio'],
-                                                                            $complementos[$i]['qtde_min'],
-                                                                            $complementos[$i]['qtde_max'],
-                                                                            $this->id,
-                                                                            $this->idEmpresa
-                                                                        )
+                $resp = $crud->Inserir(
+                    'categoria_complementos',
+                    array(
+                        'catcom_nome',
+                        'catcom_obrigatorio',
+                        'catcom_qtdemin',
+                        'catcom_qtdemax',
+                        'pro_id',
+                        'emp_id'
+                    ),
+                    array(
+                        utf8_decode($complementos[$i]['nome']),
+                        $complementos[$i]['flag_obrigatorio'],
+                        $complementos[$i]['qtde_min'],
+                        $complementos[$i]['qtde_max'],
+                        $this->id,
+                        $this->idEmpresa
+                    )
                 );
 
                 if ($resp) {
@@ -538,23 +541,24 @@ class Produto implements Interfaceclasses
                             $preco = !empty($opcoes['preco'][$j]) ? $opcoes['preco'][$j] : 0;
 
                             $preco = str_replace(".", "", $preco);
-                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+                            $preco = filter_var(str_replace(",", ".", $preco), FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-                            $resp = $crud->Inserir('produto_tem_complementos',
-                                                                                    array(
-                                                                                        'pro_id',
-                                                                                        'catcom_id',
-                                                                                        'nome',
-                                                                                        'descricao',
-                                                                                        'preco',
-                                                                                    ),
-                                                                                    array(
-                                                                                        $this->id,
-                                                                                        $idcomplemento,
-                                                                                        utf8_decode($nome),
-                                                                                        utf8_decode($descricao),
-                                                                                        $preco,
-                                                                                    )
+                            $resp = $crud->Inserir(
+                                'produto_tem_complementos',
+                                array(
+                                    'pro_id',
+                                    'catcom_id',
+                                    'nome',
+                                    'descricao',
+                                    'preco',
+                                ),
+                                array(
+                                    $this->id,
+                                    $idcomplemento,
+                                    utf8_decode($nome),
+                                    utf8_decode($descricao),
+                                    $preco,
+                                )
                             );
 
                             $j++;
@@ -562,14 +566,11 @@ class Produto implements Interfaceclasses
 
                         if (empty($resp))
                             $resp = $crud->Excluir('categoria_complementos', 'catcom_id', $idcomplemento);
-
                     }
-
                 }
 
                 $i++;
             }
-
         }
 
         $crud->executar($resp);
@@ -596,15 +597,15 @@ class Produto implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "SELECT COUNT(*) total FROM produto i INNER JOIN categoria_produtos ci ON i.cat_id = ci.cat_id where (lower(pro_nome) like ? OR lower(cat_nome) like ?) AND i.emp_id = ? ";
-            $resp = $crud->ConsultaGenerica($sql, array("%".strtolower(tiraacento($filtro))."%","%".strtolower(tiraacento($filtro))."%", $this->idEmpresa));
+            $resp = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%", "%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa));
         } else {
             $resp = $crud->ConsultaGenerica("SELECT count(*) total FROM produto i INNER JOIN categoria_produtos ci ON i.cat_id = ci.cat_id WHERE i.emp_id = ?", array($this->idEmpresa));
         }
 
-        if(!empty($resp)){
-            foreach ($resp as $rsr){
+        if (!empty($resp)) {
+            foreach ($resp as $rsr) {
                 $total = $rsr['total'];
             }
         }
@@ -616,7 +617,7 @@ class Produto implements Interfaceclasses
     {
         $crud = new Crud(FALSE);
 
-        if(!empty($filtro)){
+        if (!empty($filtro)) {
             $sql = "SELECT p.pro_id, p.pro_nome, p.pro_valor, cp.cat_nome, pro_ativo FROM produto p INNER JOIN categoria_produtos cp ON p.cat_id = cp.cat_id where (lower(pro_nome) like ? OR lower(cat_nome) like ?) AND p.emp_id = ? order by p.pro_nome LIMIT ?, ?";
             $res = $crud->ConsultaGenerica($sql, array("%" . strtolower(tiraacento($filtro)) . "%", "%" . strtolower(tiraacento($filtro)) . "%", $this->idEmpresa, $inicio, $fim));
         } else {
@@ -632,17 +633,17 @@ class Produto implements Interfaceclasses
         $resp = $crud->Consulta("produto WHERE pro_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmpresa));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["pro_nome"]);
+            $this->nome = $resp[0]["pro_nome"];
             $this->dtCad = $resp[0]["pro_dtCad"];
-            $this->obs = utf8_encode($resp[0]["pro_descricao"]);
+            $this->obs = $resp[0]["pro_descricao"];
             $this->controle_estoque = $resp[0]["pro_controle_estoque"];
-            $this->custo = number_format($resp[0]["pro_custo"], 2, ",", ".") ;
-            $this->preco = number_format($resp[0]["pro_valor"], 2, ",", ".") ;
+            $this->custo = number_format($resp[0]["pro_custo"], 2, ",", ".");
+            $this->preco = number_format($resp[0]["pro_valor"], 2, ",", ".");
             $this->idUnidade = $resp[0]["uni_id"];
             $this->idCategoria = $resp[0]["cat_id"];
             $this->idFornecedor = $resp[0]["for_id"];
             $this->idEmpresa = $resp[0]["emp_id"];
-            $this->nome_imagem = utf8_encode($resp[0]['pro_foto']);
+            $this->nome_imagem = $resp[0]['pro_foto'];
 
             if ($resp) {
 
@@ -658,12 +659,10 @@ class Produto implements Interfaceclasses
                             $comp['opcoes'] = $resp_opcoes;
                             $resp_comp[$i] = $comp;
                         }
-
                     }
 
                     $this->complementos = $resp_comp;
                 }
-
             }
 
             return true;
@@ -672,7 +671,8 @@ class Produto implements Interfaceclasses
         return false;
     }
 
-    function carregar_complementos() {
+    function carregar_complementos()
+    {
         $crud = new Crud();
         $complementos_categoria = array();
         $complementos_produto = array();
@@ -684,7 +684,7 @@ class Produto implements Interfaceclasses
             foreach ($resp_comp as $i => $comp) {
 
                 $complementos_categoria[$i]['id'] = $comp['catcom_id'];
-                $complementos_categoria[$i]['nome'] = utf8_encode($comp['catcom_nome']);
+                $complementos_categoria[$i]['nome'] = $comp['catcom_nome'];
                 $complementos_categoria[$i]['obrigatorio'] = empty($comp['catcom_obrigatorio']) ? false : true;
                 $complementos_categoria[$i]['qtdemin'] = $comp['catcom_qtdemin'];
                 $complementos_categoria[$i]['qtdemax'] = $comp['catcom_qtdemax'];
@@ -699,18 +699,14 @@ class Produto implements Interfaceclasses
                         $array_opcoes = array();
 
                         $array_opcoes['id'] = $opcoes['cat_com_id'];
-                        $array_opcoes['nome'] = utf8_encode($opcoes['nome']);
-                        $array_opcoes['descricao'] = utf8_encode($opcoes['descricao']);
+                        $array_opcoes['nome'] = $opcoes['nome'];
+                        $array_opcoes['descricao'] = $opcoes['descricao'];
                         $array_opcoes['preco'] = !empty($opcoes['preco']) && floatval($opcoes['preco']) > 0 ? 'R$ ' . number_format($opcoes['preco'], 2, ',', '.') : '';
 
                         $complementos_categoria[$i]['opcoes'][] = $array_opcoes;
-
                     }
-
                 }
-
             }
-
         }
 
         $resp_comp = $crud->ConsultaGenerica('SELECT catcom_id, catcom_nome, catcom_obrigatorio, catcom_qtdemin, catcom_qtdemax FROM categoria_complementos WHERE pro_id = ? AND emp_id = ? ORDER BY catcom_obrigatorio DESC', array($this->id, $this->idEmpresa));
@@ -720,7 +716,7 @@ class Produto implements Interfaceclasses
             foreach ($resp_comp as $i => $comp) {
 
                 $complementos_produto[$i]['id'] = $comp['catcom_id'];
-                $complementos_produto[$i]['nome'] = utf8_encode($comp['catcom_nome']);
+                $complementos_produto[$i]['nome'] = $comp['catcom_nome'];
                 $complementos_produto[$i]['obrigatorio'] = empty($comp['catcom_obrigatorio']) ? false : true;
                 $complementos_produto[$i]['qtdemin'] = $comp['catcom_qtdemin'];
                 $complementos_produto[$i]['qtdemax'] = $comp['catcom_qtdemax'];
@@ -735,40 +731,36 @@ class Produto implements Interfaceclasses
                         $array_opcoes = array();
 
                         $array_opcoes['id'] = $opcoes['pro_com_id'];
-                        $array_opcoes['nome'] = utf8_encode($opcoes['nome']);
-                        $array_opcoes['descricao'] = utf8_encode($opcoes['descricao']);
+                        $array_opcoes['nome'] = $opcoes['nome'];
+                        $array_opcoes['descricao'] = $opcoes['descricao'];
                         $array_opcoes['preco'] = !empty($opcoes['preco']) && floatval($opcoes['preco']) > 0 ? 'R$ ' . number_format($opcoes['preco'], 2, ',', '.') : '';
 
                         $complementos_produto[$i]['opcoes'][] = $array_opcoes;
-
                     }
-
                 }
-
             }
-
         }
 
         return array_merge($complementos_categoria, $complementos_produto);
     }
 
-    function verificarImagem($file) {
+    function verificarImagem($file)
+    {
         $retorno = false;
 
         if (!empty($file["error"]) && $file["error"] !== 4) {
 
             if ($file["error"] === 1 || $file["error"] === 2)
-                $this->retorno = 'O arquivo \''. $file["name"] .'\' excede o tamanho máximo permitido de 1,5MB';
-            elseif($file["error"] === 3)
+                $this->retorno = 'O arquivo \'' . $file["name"] . '\' excede o tamanho máximo permitido de 1,5MB';
+            elseif ($file["error"] === 3)
                 $this->retorno = 'Não foi possível fazer o upload completo do arquivo, tente novamente';
-            elseif($file["error"] === 6)
+            elseif ($file["error"] === 6)
                 $this->retorno = 'Não foi possível fazer o upload do arquivo (pasta temporária ausente)';
             else
                 $this->retorno = 'Erro inesperável no upload do arquivo, tente novamente';
-
-        } else if($file["size"] > 1572864) {
+        } else if ($file["size"] > 1572864) {
             $this->retorno = 'O arquivo \'' . $file["name"] . '\' excede o tamanho máximo permitido de 1,5MB';
-        }elseif(strcmp('image/png', $file["type"]) !== 0 && strcmp('image/jpeg', $file["type"]) !== 0) {
+        } elseif (strcmp('image/png', $file["type"]) !== 0 && strcmp('image/jpeg', $file["type"]) !== 0) {
             $this->retorno = 'O Tipo do arquivo enviado é inválido. Por favor, envie um arquivo do tipo "jpeg ou png"';
         } else
             $retorno = true;
@@ -776,14 +768,15 @@ class Produto implements Interfaceclasses
         return $retorno;
     }
 
-    public function modificaAtivo() {
+    public function modificaAtivo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("select pro_ativo from produto where pro_id = ?", array($this->id));
         foreach ($resp as $rs) {
             $this->ativo = $rs['pro_ativo'];
         }
         /*Altera o status do banner, se estiver desabilitada, entao habilita, ou vice-versa*/
-        if(!empty($this->ativo))
+        if (!empty($this->ativo))
             $this->ativo = 0;
         else
             $this->ativo = 1;
@@ -793,27 +786,28 @@ class Produto implements Interfaceclasses
         return $resp;
     }
 
-    private function excluirImagens($nome_img) {
+    private function excluirImagens($nome_img)
+    {
 
         if (file_exists('../img/restaurantes/produtos/' . $nome_img))
             unlink('../img/restaurantes/produtos/' . $nome_img);
 
         if (file_exists('../img/restaurantes/produtos/thumbs/' . $nome_img))
             unlink('../img/restaurantes/produtos/thumbs/' . $nome_img);
-
     }
 
-    private function salvarImagem($nome_file) {
+    private function salvarImagem($nome_file)
+    {
 
-        try{
+        try {
 
             $tipo_principal = ".jpg";
             $parametro_principal = null;
 
-            if (strcmp('image/jpeg',$this->file_imagem['type']) === 0) {
+            if (strcmp('image/jpeg', $this->file_imagem['type']) === 0) {
                 $tipo_principal = ".jpg";
                 $parametro_principal = 90;
-            } elseif (strcmp('image/png',$this->file_imagem['type']) === 0) {
+            } elseif (strcmp('image/png', $this->file_imagem['type']) === 0) {
                 $tipo_principal = ".png";
                 $parametro_principal = 9;
             }
@@ -823,13 +817,13 @@ class Produto implements Interfaceclasses
             $image_principal = WideImage::loadFromFile($this->file_imagem['tmp_name']);
 
             $resized_principal = $image_principal->resize(640, 480, 'inside');
-            $resized_principal->saveToFile('../img/restaurantes/produtos/'. $nome_principal, $parametro_principal);
+            $resized_principal->saveToFile('../img/restaurantes/produtos/' . $nome_principal, $parametro_principal);
 
             $resized_principal = $image_principal->resize(250, 250, 'inside');
             $resized_principal->saveToFile('../img/restaurantes/produtos/thumbs/' . $nome_principal, $parametro_principal);
-
         } catch (\Exception $e) {
-            echo 'ERRO ! imagem corrompida: ' . $e->getMessage();die;
+            echo 'ERRO ! imagem corrompida: ' . $e->getMessage();
+            die;
         }
 
 
@@ -837,21 +831,20 @@ class Produto implements Interfaceclasses
         return $nome_principal;
     }
 
-    public function recuperarEstoque() {
-    	$crud = new Crud();
+    public function recuperarEstoque()
+    {
+        $crud = new Crud();
 
-    	$resp = $crud->ConsultaGenerica('SELECT pro_controle_estoque, pro_estoque_atual FROM produto WHERE pro_id = ? LIMIT 1', array($this->id));
+        $resp = $crud->ConsultaGenerica('SELECT pro_controle_estoque, pro_estoque_atual FROM produto WHERE pro_id = ? LIMIT 1', array($this->id));
 
-    	if (!empty($resp)) {
+        if (!empty($resp)) {
 
-    		$this->controle_estoque = $resp[0]['pro_controle_estoque'];
+            $this->controle_estoque = $resp[0]['pro_controle_estoque'];
 
-    		if (!empty(!empty($resp[0]['pro_estoque_atual'])))
-    			return (int) $resp[0]['pro_estoque_atual'];
+            if (!empty(!empty($resp[0]['pro_estoque_atual'])))
+                return (int) $resp[0]['pro_estoque_atual'];
+        }
 
-		}
-
-    	return 0;
-	}
-
+        return 0;
+    }
 }

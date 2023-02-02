@@ -1,0 +1,53 @@
+# Página da imagem
+# https://hub.docker.com/r/gotechnies/php-5.6-alpine/dockerfile
+
+version: "3.9"
+services:
+  # image project
+  delivery:
+    container_name: delivery_free
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+    restart: unless-stopped
+    mem_limit: 512m
+  # db mysql
+  mysql:
+    container_name: avaliacoes-mysql
+    image: mysql:5.7.39
+    restart: unless-stopped
+    mem_limit: 2048m
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel-9
+  phpmyadmin:
+    container_name: delivery-phpmyadmin
+    image: phpmyadmin:5.2.0
+    restart: unless-stopped
+    mem_limit: 512m
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - "PMA_HOST:${DB_HOST}"
+      - "PMA_PORT:${DB_PORT}"
+      - "PMA_USER:${DB_USERNAME}"
+      - "PMA_PASSWORD:${DB_PASSWORD}"
+    networks:
+      - laravel-9
+networks:
+  laravel-9:
+    driver: bridge

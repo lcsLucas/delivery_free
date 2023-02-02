@@ -5,7 +5,8 @@ require_once 'admin/funcoes.php';
 require_once 'Interfaceclasses.php';
 require_once 'Cidade.php';
 
-class Endereco implements Interfaceclasses {
+class Endereco implements Interfaceclasses
+{
     private $id;
     private $rua;
     private $numero;
@@ -15,7 +16,8 @@ class Endereco implements Interfaceclasses {
     private $descricao;
     private $crud;
 
-    function __construct($rua="", $numero="", $cep="", $bairro="", $descricao="") {
+    function __construct($rua = "", $numero = "", $cep = "", $bairro = "", $descricao = "")
+    {
         $this->rua = $rua;
         $this->numero = $numero;
         $this->cep = $cep;
@@ -24,39 +26,48 @@ class Endereco implements Interfaceclasses {
         $this->cidade = new Cidade();
     }
 
-    function getId() {
+    function getId()
+    {
         return $this->id;
     }
 
-    function getRua() {
+    function getRua()
+    {
         return $this->rua;
     }
 
-    function getNumero() {
+    function getNumero()
+    {
         return $this->numero;
     }
 
-    function getCep() {
+    function getCep()
+    {
         return $this->cep;
     }
 
-    function getBairro() {
+    function getBairro()
+    {
         return $this->bairro;
     }
 
-    function getCidade() {
+    function getCidade()
+    {
         return $this->cidade;
     }
 
-    function setId($id) {
+    function setId($id)
+    {
         $this->id = $id;
     }
 
-    function setRua($rua) {
+    function setRua($rua)
+    {
         $this->rua = $rua;
     }
 
-    function setNumero($numero) {
+    function setNumero($numero)
+    {
         if (!empty($numero) && intval($numero) >= 0)
             $this->numero = $numero;
         else
@@ -79,15 +90,18 @@ class Endereco implements Interfaceclasses {
         $this->crud = $crud;
     }
 
-    function setCep($cep) {
+    function setCep($cep)
+    {
         $this->cep = $cep;
     }
 
-    function setBairro($bairro) {
+    function setBairro($bairro)
+    {
         $this->bairro = $bairro;
     }
 
-    function setCidade($cidade) {
+    function setCidade($cidade)
+    {
         $this->cidade = $cidade;
     }
 
@@ -107,37 +121,43 @@ class Endereco implements Interfaceclasses {
         $this->descricao = $descricao;
     }
 
-    public function alterar() {
+    public function alterar()
+    {
         if (empty($this->crud))
             $this->crud = new Crud();
 
-        $resp = $this->crud->Altera("endereco",
-            array("end_rua",
+        $resp = $this->crud->Altera(
+            "endereco",
+            array(
+                "end_rua",
                 "end_numero",
                 "end_cep",
                 "end_bairro",
                 "cid_id"
             ),
-            array(utf8_decode($this->rua),
+            array(
+                utf8_decode($this->rua),
                 utf8_decode($this->numero),
                 utf8_decode($this->cep),
                 utf8_decode($this->bairro),
                 $this->cidade->getId()
             ),
-            "end_id" , $this->id
+            "end_id",
+            $this->id
         );
 
         return $resp;
     }
 
-    public function carregar() {
+    public function carregar()
+    {
         $crud = new Crud();
         $resp = $crud->Consulta("endereco WHERE end_id = ? LIMIT 1", array($this->id));
         if (!empty($resp)) {
-            $this->rua = utf8_encode($resp[0]["end_rua"]);
-            $this->numero = utf8_encode($resp[0]["end_numero"]);
-            $this->cep = utf8_encode($resp[0]["end_cep"]);
-            $this->bairro = utf8_encode($resp[0]["end_bairro"]);
+            $this->rua = $resp[0]["end_rua"];
+            $this->numero = $resp[0]["end_numero"];
+            $this->cep = $resp[0]["end_cep"];
+            $this->bairro = $resp[0]["end_bairro"];
             $this->cidade->setId($resp[0]["cid_id"]);
             $this->cidade->carregar();
 
@@ -147,7 +167,8 @@ class Endereco implements Interfaceclasses {
         return false;
     }
 
-    public function excluir() {
+    public function excluir()
+    {
         if (empty($this->crud))
             $this->crud = new Crud();
 
@@ -155,12 +176,15 @@ class Endereco implements Interfaceclasses {
         return $resp;
     }
 
-    public function inserir() {
+    public function inserir()
+    {
         if (empty($this->crud))
             $this->crud = new Crud();
 
-        $resp = $this->crud->Inserir("endereco",
-            array("end_rua",
+        $resp = $this->crud->Inserir(
+            "endereco",
+            array(
+                "end_rua",
                 "end_numero",
                 "end_cep",
                 "end_bairro",
@@ -168,7 +192,8 @@ class Endereco implements Interfaceclasses {
                 "end_descricao",
                 "end_ativo"
             ),
-            array(utf8_decode($this->rua),
+            array(
+                utf8_decode($this->rua),
                 utf8_decode($this->numero),
                 utf8_decode($this->cep),
                 utf8_decode($this->bairro),
@@ -185,16 +210,15 @@ class Endereco implements Interfaceclasses {
         return $resp;
     }
 
-    public function listar() {
-
+    public function listar()
+    {
     }
 
-    public function listarPaginacao($filtro, $inicio, $fim, $chaves = "") {
-
+    public function listarPaginacao($filtro, $inicio, $fim, $chaves = "")
+    {
     }
 
-    public function quantidadeRegistros($filtro, $chaves = "") {
-
+    public function quantidadeRegistros($filtro, $chaves = "")
+    {
     }
 }
-

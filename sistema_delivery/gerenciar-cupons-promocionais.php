@@ -1,165 +1,159 @@
 <?php
 
-    $menu = "Promoções";
-    $submenu = "Gerenciar Cupons Promocionais";
-    $mask = true;
-    $dataTables = true;
-    $datetimepicker = true;
+$menu = "Promoções";
+$submenu = "Gerenciar Cupons Promocionais";
+$mask = true;
+$dataTables = true;
+$datetimepicker = true;
 
-    $id = $codigo_promocional = $nome = $valor_desconto = $data_final = $data_inicial = "";
+$id = $codigo_promocional = $nome = $valor_desconto = $data_final = $data_inicial = "";
 
-    include_once './topo.php';
-    include_once 'classes/Promocao.php';
+include_once './topo.php';
+include_once 'classes/Promocao.php';
 
-    $promocao = new Promocao();
-    $promocao->setIdEmpresa($_SESSION["_idEmpresa"]);
-    $promocao->setTipo(0); //0 = promoção de cupons
+$promocao = new Promocao();
+$promocao->setIdEmpresa($_SESSION["_idEmpresa"]);
+$promocao->setTipo(0); //0 = promoção de cupons
 
-    $id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
+$id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
-        if (filter_has_var(INPUT_POST, 'btnEnviar')) {// enviada do formulario de cadastro/alteração
-            $id = filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT);
-            $nome = trim(filter_input(INPUT_POST, "nome", FILTER_SANITIZE_SPECIAL_CHARS));
-            $codigo_promocional = trim(filter_input(INPUT_POST, "codigo_promocional", FILTER_SANITIZE_SPECIAL_CHARS));
-            $data_inicial = trim(SQLinjection(filter_input(INPUT_POST, "data_inicial", FILTER_SANITIZE_SPECIAL_CHARS)));
-            $data_final = trim(SQLinjection(filter_input(INPUT_POST, "data_final", FILTER_SANITIZE_SPECIAL_CHARS)));
-            $tipo_desconto = filter_input(INPUT_POST, "tpDesconto", FILTER_VALIDATE_INT);
-            $valor_desconto = trim(SQLinjection(filter_input(INPUT_POST, "valor_desconto", FILTER_SANITIZE_SPECIAL_CHARS)));
-            $porcentagem_desconto = trim(SQLinjection(filter_input(INPUT_POST, "porcentagem_desconto", FILTER_SANITIZE_SPECIAL_CHARS)));
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
+    if (filter_has_var(INPUT_POST, 'btnEnviar')) { // enviada do formulario de cadastro/alteração
+        $id = filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT);
+        $nome = trim(filter_input(INPUT_POST, "nome", FILTER_SANITIZE_SPECIAL_CHARS));
+        $codigo_promocional = trim(filter_input(INPUT_POST, "codigo_promocional", FILTER_SANITIZE_SPECIAL_CHARS));
+        $data_inicial = trim(SQLinjection(filter_input(INPUT_POST, "data_inicial", FILTER_SANITIZE_SPECIAL_CHARS)));
+        $data_final = trim(SQLinjection(filter_input(INPUT_POST, "data_final", FILTER_SANITIZE_SPECIAL_CHARS)));
+        $tipo_desconto = filter_input(INPUT_POST, "tpDesconto", FILTER_VALIDATE_INT);
+        $valor_desconto = trim(SQLinjection(filter_input(INPUT_POST, "valor_desconto", FILTER_SANITIZE_SPECIAL_CHARS)));
+        $porcentagem_desconto = trim(SQLinjection(filter_input(INPUT_POST, "porcentagem_desconto", FILTER_SANITIZE_SPECIAL_CHARS)));
 
-            if (empty($nome) || empty($codigo_promocional) || empty($data_inicial) || empty($data_final) || ($tipo_desconto !== 1 && $tipo_desconto !== 2)) {
-                $erroCamposVazios = true;
+        if (empty($nome) || empty($codigo_promocional) || empty($data_inicial) || empty($data_final) || ($tipo_desconto !== 1 && $tipo_desconto !== 2)) {
+            $erroCamposVazios = true;
+            $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
+        } else {
+
+            $valor_desconto2 = str_replace(".", "", $valor_desconto);
+            $valor_desconto2 = str_replace(",", ".", $valor_desconto2);
+
+            $porcentagem_desconto2 = str_replace(".", "", $porcentagem_desconto);
+            $porcentagem_desconto2 = str_replace(",", ".", $porcentagem_desconto2);
+
+            $promocao->setNome($nome);
+            $promocao->setCupom($codigo_promocional);
+            $promocao->setDataInicial($data_inicial);
+            $promocao->setDataFinal($data_final);
+            $promocao->setTipoDesconto($tipo_desconto);
+
+            if ($tipo_desconto === 1)
+                $promocao->setDescontoPorcentagem($porcentagem_desconto2);
+            else if ($tipo_desconto === 2)
+                $promocao->setDescontoValor($valor_desconto2);
+
+            if (!empty($porcentagem_desconto2) && $porcentagem_desconto2 > 60) {
+                $erroPersonalizado = true;
+                $erroMensagem = "Porcentagem maior que 60%";
                 $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
             } else {
 
-                $valor_desconto2 = str_replace(".", "", $valor_desconto);
-                $valor_desconto2 = str_replace(",", ".", $valor_desconto2);
-
-                $porcentagem_desconto2 = str_replace(".", "", $porcentagem_desconto);
-                $porcentagem_desconto2 = str_replace(",", ".", $porcentagem_desconto2);
-
-                $promocao->setNome($nome);
-                $promocao->setCupom($codigo_promocional);
-                $promocao->setDataInicial($data_inicial);
-                $promocao->setDataFinal($data_final);
-                $promocao->setTipoDesconto($tipo_desconto);
-
-                if ($tipo_desconto === 1)
-                    $promocao->setDescontoPorcentagem($porcentagem_desconto2);
-                else if($tipo_desconto === 2)
-                $promocao->setDescontoValor($valor_desconto2);
-
-                if (!empty($porcentagem_desconto2) && $porcentagem_desconto2 > 60) {
-                    $erroPersonalizado = true;
-                    $erroMensagem = "Porcentagem maior que 60%";
-                    $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
-                } else {
-
-                    if (filter_has_var(INPUT_POST, "editar")) {
-                        $promocao->setId($id);
-                        $resp = $promocao->alterar();
-                        if ($resp) {
-                            $sucessoalterar = TRUE;
-                            $id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
-                        } else {
-                            $erroalterar = TRUE;
-                            $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
-                        }
-
+                if (filter_has_var(INPUT_POST, "editar")) {
+                    $promocao->setId($id);
+                    $resp = $promocao->alterar();
+                    if ($resp) {
+                        $sucessoalterar = TRUE;
+                        $id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
                     } else {
-                        $resp = $promocao->inserir();
-
-                        if ($resp) {
-                            $sucessoinserir = TRUE;
-                            $id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
-                        } else {
-                            $erroinserir = TRUE;
-                        }
-
+                        $erroalterar = TRUE;
+                        $carregado = filter_has_var(INPUT_POST, "editar") ? true : false;
                     }
+                } else {
+                    $resp = $promocao->inserir();
 
+                    if ($resp) {
+                        $sucessoinserir = TRUE;
+                        $id = $nome = $codigo_promocional = $data_inicial = $data_final = $tipo_desconto = $valor_desconto = $porcentagem_desconto = "";
+                    } else {
+                        $erroinserir = TRUE;
+                    }
                 }
-
-            }
-
-        } else if(filter_has_var(INPUT_POST, "editar")) {
-            $promocao->setId(SQLinjection(filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT)));
-
-            if ($promocao->carregar()) {
-                $id = $promocao->getId();
-                $nome = $promocao->getNome();
-                $codigo_promocional = $promocao->getCupom();
-                $data_inicial = $promocao->getDataInicial();
-                $data_final = $promocao->getDataFinal();
-                $tipo_desconto = $promocao->getTipoDesconto();
-                $valor_desconto = $promocao->getDescontoValor();
-                $porcentagem_desconto = $promocao->getDescontoPorcentagem();
-
-                $carregado = true;
-            }
-
-        } else if (filter_has_var(INPUT_POST, "alterar-status")) {
-            $promocao->setId(filter_input(INPUT_POST, 'acao-codigo', FILTER_VALIDATE_INT));
-            if ($promocao->modificaAtivo()) {
-                $sucessoPersonalizado = true;
-                $sucessoMensagem = "ao alterar o status da Promoção!";
-            } else {
-                $erroPersonalizado = true;
-                $erroMensagem = "ao alterar o status da Promoção!";
-            }
-        } else if(filter_has_var(INPUT_POST, "deletar")) {
-            $promocao->setId(SQLinjection(filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT)));
-
-            if ($promocao->excluir()) {
-                $sucessodeletar = TRUE;
-            } else {
-                $errodeletar = TRUE;
             }
         }
+    } else if (filter_has_var(INPUT_POST, "editar")) {
+        $promocao->setId(SQLinjection(filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT)));
+
+        if ($promocao->carregar()) {
+            $id = $promocao->getId();
+            $nome = $promocao->getNome();
+            $codigo_promocional = $promocao->getCupom();
+            $data_inicial = $promocao->getDataInicial();
+            $data_final = $promocao->getDataFinal();
+            $tipo_desconto = $promocao->getTipoDesconto();
+            $valor_desconto = $promocao->getDescontoValor();
+            $porcentagem_desconto = $promocao->getDescontoPorcentagem();
+
+            $carregado = true;
+        }
+    } else if (filter_has_var(INPUT_POST, "alterar-status")) {
+        $promocao->setId(filter_input(INPUT_POST, 'acao-codigo', FILTER_VALIDATE_INT));
+        if ($promocao->modificaAtivo()) {
+            $sucessoPersonalizado = true;
+            $sucessoMensagem = "ao alterar o status da Promoção!";
+        } else {
+            $erroPersonalizado = true;
+            $erroMensagem = "ao alterar o status da Promoção!";
+        }
+    } else if (filter_has_var(INPUT_POST, "deletar")) {
+        $promocao->setId(SQLinjection(filter_input(INPUT_POST, "acao-codigo", FILTER_VALIDATE_INT)));
+
+        if ($promocao->excluir()) {
+            $sucessodeletar = TRUE;
+        } else {
+            $errodeletar = TRUE;
+        }
     }
+}
 
-    $periodo1 = '';
-    $periodo2 = '';
-    $filtro = "";
-    $parametros = "";
-    if(!empty($_GET['periodo1']) && !empty($_GET['periodo2'])){
+$periodo1 = '';
+$periodo2 = '';
+$filtro = "";
+$parametros = "";
+if (!empty($_GET['periodo1']) && !empty($_GET['periodo2'])) {
 
-        $periodo1 = filter_input(INPUT_GET, 'periodo1', FILTER_SANITIZE_SPECIAL_CHARS);
-        $periodo2 = filter_input(INPUT_GET, 'periodo2', FILTER_SANITIZE_SPECIAL_CHARS);
+    $periodo1 = filter_input(INPUT_GET, 'periodo1', FILTER_SANITIZE_SPECIAL_CHARS);
+    $periodo2 = filter_input(INPUT_GET, 'periodo2', FILTER_SANITIZE_SPECIAL_CHARS);
 
-        $parametros = "&filtro=&periodo1=".$periodo1."&periodo2=". $periodo2;
-    }
+    $parametros = "&filtro=&periodo1=" . $periodo1 . "&periodo2=" . $periodo2;
+}
 
-    //paginação
-    $urlpaginacao = "&page=1";
-    $entries_per_page = 10;
-    if (isset($_GET["page"])) {
-        $pag = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
-        $urlpaginacao = "&page=$pag";
-    }
+//paginação
+$urlpaginacao = "&page=1";
+$entries_per_page = 10;
+if (isset($_GET["page"])) {
+    $pag = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+    $urlpaginacao = "&page=$pag";
+}
 
-    $page = (isset($pag) ? $pag : 1);
+$page = (isset($pag) ? $pag : 1);
 
-    $offset = (($page * $entries_per_page) - $entries_per_page);
-    $num_rows = $promocao->quantidadeRegistros3($periodo1, $periodo2);
-    $lista = $promocao->listarPaginacao3($periodo1, $periodo2, $offset,$entries_per_page);
+$offset = (($page * $entries_per_page) - $entries_per_page);
+$num_rows = $promocao->quantidadeRegistros3($periodo1, $periodo2);
+$lista = $promocao->listarPaginacao3($periodo1, $periodo2, $offset, $entries_per_page);
 
-    $total_pages = ceil($num_rows / $entries_per_page);
-    $pagination = pagination_six($total_pages, $page,$parametros);
+$total_pages = ceil($num_rows / $entries_per_page);
+$pagination = pagination_six($total_pages, $page, $parametros);
 
 ?>
 
-    <h2 class="titulo-pagina">Gerenciar Cupons Promocionais</h2>
+<h2 class="titulo-pagina">Gerenciar Cupons Promocionais</h2>
 
-    <?php
-    include "menssagens.php";
-    ?>
+<?php
+include "menssagens.php";
+?>
 
 <div class="card mb-3 <?= empty($carregado) ? "border-primary" : "border-danger" ?>">
 
     <div class="card-header <?= empty($carregado) ? "bg-primary" : "bg-danger" ?> text-white">
-        <?= empty($carregado) ? "Cadastrar Novo Cupom Promocional" : "Alterar Cupom Promocional <q>".$nome."</q>" ?>
+        <?= empty($carregado) ? "Cadastrar Novo Cupom Promocional" : "Alterar Cupom Promocional <q>" . $nome . "</q>" ?>
     </div>
 
     <div class="card-body">
@@ -190,7 +184,7 @@
 
                 <div class="col-sm-12 col-md-6 col-lg-5">
 
-                    <label class="font-weight-bold" >Tipo de Desconto <span class="obrigatorio">*</span>:</label>
+                    <label class="font-weight-bold">Tipo de Desconto <span class="obrigatorio">*</span>:</label>
 
                     <div class="form-control form-control-lg text-center">
 
@@ -240,7 +234,7 @@
                 <div class="col-sm-12 col-md-6 col-lg-5">
                     <label class="font-weight-bold">Data Inicial <span class="obrigatorio">*</span>:</label>
                     <div style="cursor: pointer;" class="input-group input-group-lg datepicker">
-                        <input type="text" class="form-control" placeholder="dd/mm/aaaa" name="data_inicial" required value="<?= !empty($data_inicial) ? $data_inicial : date("d/m/Y") ?>" >
+                        <input type="text" class="form-control" placeholder="dd/mm/aaaa" name="data_inicial" required value="<?= !empty($data_inicial) ? $data_inicial : date("d/m/Y") ?>">
                         <div class="input-group-append input-group-addon">
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>
@@ -250,7 +244,7 @@
                 <div class="col-sm-12 col-md-6 col-lg-5">
                     <label class="font-weight-bold">Data Final <span class="obrigatorio">*</span>:</label>
                     <div style="cursor: pointer;" class="input-group input-group-lg datepicker">
-                        <input type="text" class="form-control" placeholder="dd/mm/aaaa" name="data_final" required value="<?= !empty($data_final) ? $data_final : date("d/m/Y") ?>" >
+                        <input type="text" class="form-control" placeholder="dd/mm/aaaa" name="data_final" required value="<?= !empty($data_final) ? $data_final : date("d/m/Y") ?>">
                         <div class="input-group-append input-group-addon">
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>
@@ -299,98 +293,98 @@
 
             <div class="w-100 mt-3">
                 <button type="submit" name="filtro" class="btn btn-primary mb-2"><i class="fa fa-search"></i> BUSCAR</button>
-				<?php
-				if (filter_has_var(INPUT_GET, 'periodo1') ? $_GET['periodo1'] : '') {
-					?>
+                <?php
+                if (filter_has_var(INPUT_GET, 'periodo1') ? $_GET['periodo1'] : '') {
+                ?>
                     <a href="<?= $_SERVER['PHP_SELF'] ?>" class="btn btn-danger mb-2 ml-2"><i class="fa fa-times"></i> CANCELAR</a>
-					<?php
-				}
-				?>
+                <?php
+                }
+                ?>
             </div>
 
         </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Código Promocional</th>
-                <th class="text-center">Data Início</th>
-                <th class="text-center">Data Final</th>
-                <th class="text-center">Ativo</th>
-                <th class="text-center not-ordering">Ações</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            <?php
-
-            if (!empty($lista)) {
-                foreach ($lista as $item) {
-
-                    ?>
-
+        <div class="table-responsive">
+            <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead>
                     <tr>
-
-                        <td><?= utf8_encode($item["pro_nome"]) ?></td>
-                        <td><?= utf8_encode($item["pro_cupom"]) ?></td>
-                        <td class="text-center"><?= trataDataInv($item["pro_dtInicio"]) ?></td>
-                        <td class="text-center"><?= trataDataInv($item["pro_dtFinal"]) ?></td>
-                        <td class="text-center">
-                            <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
-                                <input type="hidden" name="acao-codigo" value="<?= $item['pro_id'] ?>" />
-                                <?php
-                                if ($item['pro_ativo']) {
-                                    ?>
-                                    <button type="submit" title="Clique para Desativar a Promoção" class="btn btn-link" name="alterar-status" ><i class="fa fa-check-square-o fa-2x text-success" aria-hidden="true"></i></button>
-                                    <?php
-                                } else {
-                                    ?>
-                                    <button type="submit" title="Clique para Ativar a Promoção" class="btn btn-link" name="alterar-status" ><i class="fa fa-square-o fa-2x text-danger" aria-hidden="true"></i></button>
-                                <?php } ?>
-                            </form>
-                        </td>
-                        <td class="text-center">
-                            <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
-                                <input type="hidden" name="acao-codigo" value="<?= $item['pro_id'] ?>" />
-                                <button type="submit" class="btn btn-info btn-acao" title="Editar Promoção" name="editar">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                </button>
-                                <button type="submit" class="btn btn-danger btn-acao excluir" name="deletar" title="Excluir Promoção">
-                                    <i class="fa fa-times" aria-hidden="true"></i>
-                                </button>
-                            </form>
-                        </td>
-
+                        <th>Nome</th>
+                        <th>Código Promocional</th>
+                        <th class="text-center">Data Início</th>
+                        <th class="text-center">Data Final</th>
+                        <th class="text-center">Ativo</th>
+                        <th class="text-center not-ordering">Ações</th>
                     </tr>
+                </thead>
+                <tbody>
 
                     <?php
 
-                }
-            } else {
-                $naopagina = TRUE;
-                ?>
+                    if (!empty($lista)) {
+                        foreach ($lista as $item) {
 
-                <tr>
-                    <td class="text-center text-muted" colspan="7">Nenhuma Promoção Cadastrada</td>
-                </tr>
+                    ?>
 
-                <?php
+                            <tr>
+
+                                <td><?= $item["pro_nome"] ?></td>
+                                <td><?= $item["pro_cupom"] ?></td>
+                                <td class="text-center"><?= trataDataInv($item["pro_dtInicio"]) ?></td>
+                                <td class="text-center"><?= trataDataInv($item["pro_dtFinal"]) ?></td>
+                                <td class="text-center">
+                                    <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
+                                        <input type="hidden" name="acao-codigo" value="<?= $item['pro_id'] ?>" />
+                                        <?php
+                                        if ($item['pro_ativo']) {
+                                        ?>
+                                            <button type="submit" title="Clique para Desativar a Promoção" class="btn btn-link" name="alterar-status"><i class="fa fa-check-square-o fa-2x text-success" aria-hidden="true"></i></button>
+                                        <?php
+                                        } else {
+                                        ?>
+                                            <button type="submit" title="Clique para Ativar a Promoção" class="btn btn-link" name="alterar-status"><i class="fa fa-square-o fa-2x text-danger" aria-hidden="true"></i></button>
+                                        <?php } ?>
+                                    </form>
+                                </td>
+                                <td class="text-center">
+                                    <form method="post" action="<?= $_SERVER["PHP_SELF"]; ?>">
+                                        <input type="hidden" name="acao-codigo" value="<?= $item['pro_id'] ?>" />
+                                        <button type="submit" class="btn btn-info btn-acao" title="Editar Promoção" name="editar">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-acao excluir" name="deletar" title="Excluir Promoção">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+
+                        <?php
+
+                        }
+                    } else {
+                        $naopagina = TRUE;
+                        ?>
+
+                        <tr>
+                            <td class="text-center text-muted" colspan="7">Nenhuma Promoção Cadastrada</td>
+                        </tr>
+
+                    <?php
+                    }
+
+                    ?>
+
+                </tbody>
+            </table>
+
+            <?php
+            if (!isset($naopagina)) {
+                echo $pagination;
             }
-
             ?>
 
-            </tbody>
-        </table>
-
-        <?php
-        if(!isset($naopagina)){
-            echo $pagination;
-        }
-        ?>
-
+        </div>
     </div>
-</div>
 
-<?php include_once './rodape.php'; ?>
+    <?php include_once './rodape.php'; ?>

@@ -14,7 +14,7 @@ class ItemCompra
      * @param $qtde
      * @param $preco
      */
-    public function __construct($nome="", $qtde="", $preco="", $idEmp="")
+    public function __construct($nome = "", $qtde = "", $preco = "", $idEmp = "")
     {
         $this->nome = $nome;
         $this->qtde = $qtde;
@@ -102,7 +102,8 @@ class ItemCompra
         $this->idEmp = $idEmp;
     }
 
-    public function verificaInsumo() {
+    public function verificaInsumo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("SELECT count(ins_id) total FROM insumo WHERE ins_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmp));
 
@@ -113,7 +114,8 @@ class ItemCompra
         return false;
     }
 
-    public function verificaProduto() {
+    public function verificaProduto()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("SELECT count(pro_id) total FROM produto WHERE pro_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmp));
 
@@ -124,12 +126,13 @@ class ItemCompra
         return false;
     }
 
-    public function carregaNomeInsumo() {
+    public function carregaNomeInsumo()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("SELECT ins_nome FROM insumo WHERE ins_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmp));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["ins_nome"]);
+            $this->nome = $resp[0]["ins_nome"];
 
             return true;
         }
@@ -137,17 +140,17 @@ class ItemCompra
         return false;
     }
 
-    public function carregaNomeProduto() {
+    public function carregaNomeProduto()
+    {
         $crud = new Crud();
         $resp = $crud->ConsultaGenerica("SELECT pro_nome FROM produto WHERE pro_id = ? AND emp_id = ? LIMIT 1", array($this->id, $this->idEmp));
 
         if (!empty($resp)) {
-            $this->nome = utf8_encode($resp[0]["pro_nome"]);
+            $this->nome = $resp[0]["pro_nome"];
 
             return true;
         }
 
         return false;
     }
-
 }

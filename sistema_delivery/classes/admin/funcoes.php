@@ -156,7 +156,7 @@ function tiraAcentos2($string) {
     $string = str_replace("@", "", $string);
     $string = str_replace(";", "", $string);
     $string = strtolower($string); // passa tudo para minusculo
-    return utf8_encode($string); //finaliza, gerando uma saída para a funcao
+    return $string; //finaliza, gerando uma saída para a funcao
 }
 
 function tiraAcentos($sub) {
@@ -623,5 +623,3 @@ function get_client_ip() {
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
 }
-
-?>

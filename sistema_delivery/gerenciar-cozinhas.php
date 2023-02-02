@@ -13,7 +13,7 @@ $empresa->setId($_SESSION['_idEmpresa']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
 
-    if (filter_has_var(INPUT_POST, 'btnEnviar')) {// enviada do formulario de cadastro/alteração
+    if (filter_has_var(INPUT_POST, 'btnEnviar')) { // enviada do formulario de cadastro/alteração
 
         $array_categorias = array();
         if (filter_has_var(INPUT_POST, "sel_categorias")) {
@@ -30,11 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { //requisição post
                 $erroPersonalizado = true;
                 $erroMensagem = "Não foi possível relacionar as categorias com o restaurante, tente novamente";
             }
-
         }
-
     }
-
 }
 
 $array_categorias = $empresa->listarCategoriasId();
@@ -67,28 +64,26 @@ include 'menssagens.php';
 
                     foreach ($categorias_empresa as $cat_sel) {
 
-                        ?>
+                ?>
 
-                        <option selected value="<?= $cat_sel['cat_id'] ?>"><?= utf8_encode($cat_sel['cat_nome']) ?></option>
+                        <option selected value="<?= $cat_sel['cat_id'] ?>"><?= $cat_sel['cat_nome'] ?></option>
 
-                        <?php
+                    <?php
 
                     }
-
                 }
 
                 if (!empty($todas_categorias)) {
 
                     foreach ($todas_categorias as $cat) {
 
-                        ?>
+                    ?>
 
-                        <option value="<?= $cat['cat_id'] ?>"><?= utf8_encode($cat['cat_nome']) ?></option>
+                        <option value="<?= $cat['cat_id'] ?>"><?= $cat['cat_nome'] ?></option>
 
-                        <?php
+                <?php
 
                     }
-
                 }
 
                 ?>
@@ -113,4 +108,3 @@ include 'menssagens.php';
 <?php
 include 'rodape.php';
 ?>
-
